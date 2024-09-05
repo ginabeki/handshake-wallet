@@ -7,7 +7,7 @@ import { images } from "@/data";
 const CallToAction = () => {
   return (
     <section id="call-to-action" className="w-full mx-auto">
-      <div className="section-container">
+      <div className="section-container py-10">
         <div className="bg-primary-gray/10 p-5 md:p-10 rounded-lg md:rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 items-center justify-between gap-10">
           <div className="space-y-6">
             <div className="bg-primary-yellow inline-flex items-center justify-center p-3 rounded-full overflow-hidden">
