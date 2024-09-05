@@ -11,7 +11,7 @@ const Hero = () => {
     { name: "user3", src: images.user3 },
   ];
   return (
-    <section className="w-full mx-auto">
+    <section id="hero" className="w-full mx-auto">
       <div
         className="section-container py-10 lg:py-20 grid grid-cols-1 md:grid-cols-2 
       lg:grid-cols-3 items-start justify-between gap-10"
@@ -28,10 +28,10 @@ const Hero = () => {
           </div>
         </div>
         <div className="lg:col-span-2 flex flex-col items-center md:items-start justify-start space-y-6 md:space-y-6">
-          <h1 className="w-full mx-auto font-roboto font-semibold text-3xl md:text-4xl lg:text-6xl first-letter:uppercase text-center md:text-left">
+          <h1 className="w-full mx-auto font-roboto font-semibold text-4xl lg:text-6xl first-letter:uppercase text-center md:text-left">
             Borderless transactions & Secure Purchases
           </h1>
-          <p className="w-full text-primary-gray text-[16px] md:text-[18px] lg:text-[24px] text-center md:text-left">
+          <p className="w-full text-primary-gray text-[15px] md:text-[17px] lg:text-[19px] text-center md:text-left">
             Send money instantly and shop locally using our platform
           </p>
           <div className="w-full inline-flex items-center justify-center lg:justify-start space-x-4">
@@ -68,7 +68,7 @@ const Hero = () => {
                 15 Million+
               </div>
             </div>
-            <p className="text-primary-gray text-[14px] md:text-[16px] lg:text-[20px]">
+            <p className="text-primary-gray text-[14px] md:text-[16px] lg:text-[18px]">
               Trusted by million of satidfied users, our financial services have
               made a real impact on people's lives
             </p>
