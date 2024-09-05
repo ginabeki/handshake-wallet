@@ -70,7 +70,7 @@ const Hero = () => {
             </div>
             <p className="text-primary-gray text-[14px] md:text-[16px] lg:text-[18px]">
               Trusted by million of satidfied users, our financial services have
-              made a real impact on people's lives
+              made a real impact on people&apos;s lives
             </p>
           </div>
         </div>

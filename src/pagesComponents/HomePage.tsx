@@ -1,4 +1,4 @@
-import { CallToAction, Features, Hero } from "@/components";
+import { CallToAction, ExploreMarketPlace, Features, Hero } from "@/components";
 
 import React from "react";
 
@@ -8,6 +8,7 @@ const HomePage = () => {
       <Hero />
       <Features />
       <CallToAction />
+      <ExploreMarketPlace />
     </main>
   );
 };
