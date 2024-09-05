@@ -1,12 +1,6 @@
-"use client";
-
-import { Inter } from "next/font/google";
+import { ReduxProvider } from "@/context";
 import "../styles/globals.css";
-import { Provider } from "react-redux";
-import { store } from "@/lib/state/store";
 import { Footer, Navbar } from "@/components/layout";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -22,12 +16,12 @@ export default function RootLayout({
         <meta name="description" content="HandShake Wallet" />
         <link rel="icon" href="./images/logo/logo.png" />
       </head>
-      <body className={inter.className}>
-        <Provider store={store}>
+      <body>
+        <ReduxProvider>
           <Navbar />
           {children}
           <Footer />
-        </Provider>
+        </ReduxProvider>
       </body>
     </html>
   );
