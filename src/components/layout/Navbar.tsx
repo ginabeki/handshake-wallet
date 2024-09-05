@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 const navigations = [
+  { name: "Home", href: "/", customClass: "block lg:hidden" },
   { name: "about", href: "/about", customClass: "" },
   {
     name: "send money",
@@ -24,8 +25,8 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <header className="w-full mx-auto">
-      <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] p-5 md:px-10">
+    <header className="w-full mx-auto drop-shadow-md">
+      <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] px-5 py-6 md:px-10">
         <Link href={"/"} className="w-[200px]">
           <CustomImage
             src={images.logo2}
@@ -90,10 +91,10 @@ const Navbar = () => {
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
+            animate={{ height: "100vh", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="relative md:absolute right-0 w-full h-full backdrop-blur-md bg-black/5 p-5 overflow-hidden lg:hidden 
+            className="absolute right-0 w-full h-full backdrop-blur-xl bg-black/50 p-5 overflow-hidden lg:hidden 
             "
           >
             <div className="flex flex-col items-center justify-center gap-2 md:max-w-[300px] md:ml-auto w-full">
@@ -102,13 +103,14 @@ const Navbar = () => {
                   onClick={() => setIsOpen(!isOpen)}
                   key={nav.name}
                   href={nav.href}
-                  className={`capitalize relative w-full border-black p-3 inline-flex items-center justify-start space-x-5 rounded-lg ${
-                    nav.customClass
-                  }
+                  className={`capitalize relative w-full border-black p-3 inline-flex 
+                    items-center justify-start space-x-5 rounded-lg ${
+                      nav.customClass
+                    }
                    ${
                      String(pathname) === nav.href
                        ? "bg-primary-yellow"
-                       : "bg-primary-gray/20 hover:bg-primary-yellow/70 text-black"
+                       : "bg-white hover:bg-primary-yellow/70 text-black"
                    }`}
                 >
                   <span>{nav.name}</span>
