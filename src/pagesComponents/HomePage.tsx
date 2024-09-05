@@ -1,5 +1,5 @@
-import { Hero, Title } from "@/components";
-import Features from "@/components/Features";
+import { CallToAction, Features, Hero } from "@/components";
+
 import React from "react";
 
 const HomePage = () => {
@@ -7,6 +7,7 @@ const HomePage = () => {
     <main className="w-full mx-auto">
       <Hero />
       <Features />
+      <CallToAction />
     </main>
   );
 };
