@@ -4,7 +4,7 @@ import React from "react";
 
 const HomePage = () => {
   return (
-    <main className="w-full mx-auto">
+    <main className="w-full h-auto">
       <Hero />
       <Features />
       <CallToAction />

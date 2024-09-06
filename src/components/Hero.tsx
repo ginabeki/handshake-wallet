@@ -11,7 +11,7 @@ const Hero = () => {
     { name: "user3", src: images.user3 },
   ];
   return (
-    <section id="hero" className="w-full mx-auto">
+    <section id="hero-section" className="w-full mx-auto">
       <div
         className="section-container py-10 lg:py-20 grid grid-cols-1 md:grid-cols-2 
       lg:grid-cols-3 items-start justify-between gap-10"
@@ -24,6 +24,7 @@ const Hero = () => {
               width={1000}
               height={1000}
               className="w-full h-full object-center object-cover"
+              loading="eager"
             />
           </div>
         </div>
