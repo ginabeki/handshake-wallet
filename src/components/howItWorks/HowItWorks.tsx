@@ -90,7 +90,7 @@ const HowItWorks = () => {
                     </p>
                     <Accordion type="single" collapsible>
                         <AccordionItem value="item-1" className="bg-[#E3EAF1] mb-3 text-left rounded-[24px]">
-                            <AccordionTrigger className="text-left px-10">
+                            <AccordionTrigger className="text-left px-2 md:px-10">
                                 What services and transactions can be performed through internet
                                 banking?
                             </AccordionTrigger>
@@ -100,7 +100,7 @@ const HowItWorks = () => {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-2" className="bg-[#E3EAF1] mb-3 text-left rounded-[24px]">
-                            <AccordionTrigger className="text-left px-10">
+                            <AccordionTrigger className="text-left px-2 md:px-10">
                                 What services and transactions can be performed through internet
                                 banking?
                             </AccordionTrigger>
@@ -110,7 +110,7 @@ const HowItWorks = () => {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-3" className="bg-[#E3EAF1] mb-3 text-left rounded-[24px]">
-                            <AccordionTrigger className="text-left px-10">
+                            <AccordionTrigger className="text-left px-2 md:px-10">
                                 What services and transactions can be performed through internet
                                 banking?
                             </AccordionTrigger>
@@ -120,7 +120,7 @@ const HowItWorks = () => {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-4" className="bg-[#E3EAF1] mb-3 text-left rounded-[24px]">
-                            <AccordionTrigger className="text-left px-10">
+                            <AccordionTrigger className="text-left px-2 md:px-10">
                                 What services and transactions can be performed through internet
                                 banking?
                             </AccordionTrigger>
@@ -130,7 +130,7 @@ const HowItWorks = () => {
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="item-5" className="bg-[#E3EAF1] mb-3 text-left rounded-[24px]">
-                            <AccordionTrigger className="text-left px-10">
+                            <AccordionTrigger className="text-left px-2 md:px-10">
                                 What services and transactions can be performed through internet
                                 banking?
                             </AccordionTrigger>
@@ -140,7 +140,7 @@ const HowItWorks = () => {
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
-                    <div className="flex gap-6 mt-10">
+                    <div className="flex flex-col md:flex-row gap-6 mt-10">
                         <p>Still don’t understand Handshake:</p>
                         <Button asChild>
                             <Link href="/">Contact Us </Link>
