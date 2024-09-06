@@ -94,8 +94,7 @@ const Navbar = () => {
             animate={{ height: "100vh", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 w-full h-full backdrop-blur-md bg-black/50 p-5 overflow-hidden lg:hidden 
-            "
+            className="absolute right-0 w-full h-full bg-black/90 p-5 overflow-hidden lg:hidden"
           >
             <div className="flex flex-col items-center justify-center gap-2 md:max-w-[300px] md:ml-auto w-full">
               {navigations.map((nav) => (
