@@ -19,9 +19,10 @@ const CallToAction = () => {
             />
 
             <p className="text-[16px] md:text-[18px] lg:text-[20px] text-primary-gray font-normal">
-              Create a custom card that reflects your uinque style and
-              personality. Choose from a range of colors, patterns, and designs
-              to customize the look of your card.
+              Experience seamless global transactions with our tbDEX-powered
+              wallet. We connect you to optimal liquidity providers, ensuring
+              swift and secure cross-border transfers. Embrace financial freedom
+              at your fingertips.
             </p>
           </div>
           <div className="w-full h-full">
