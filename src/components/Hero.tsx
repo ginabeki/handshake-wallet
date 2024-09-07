@@ -17,7 +17,7 @@ const Hero = () => {
       lg:grid-cols-3 items-start justify-between gap-10"
       >
         <div className="hidden w-full h-auto md:flex flex-col items-center justify-center">
-          <div className="w-full h-full -ml-10">
+          <div className="w-full h-full -ml-10 animate-pulse">
             <CustomImage
               src={images.hero1}
               alt="hero image"
