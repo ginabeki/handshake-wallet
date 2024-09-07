@@ -67,7 +67,7 @@ const HowItWorks = () => {
     },
   ];
   return (
-    <section>
+    <section className="w-full mx-auto">
       <div className="section-container grid grid-cols-1 lg:grid-cols-2 items-start justify-center gap-5">
         {/* First column */}
         <div className="space-y-5 lg:px-5">

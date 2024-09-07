@@ -6,9 +6,7 @@ interface TitleProps {
 }
 const Title = ({ title, customClass }: TitleProps) => {
   return (
-    <h2
-      className={`w-full mx-auto font-roboto font-semibold text-3xl md:text-5xl lg:text-6xl first-letter:uppercase ${customClass}`}
-    >
+    <h2 className={`w-full mx-auto font-roboto font-semibold text-3xl md:text-5xl first-letter: ${customClass}`}>
       {title}
     </h2>
   );
