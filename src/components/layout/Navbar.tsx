@@ -2,13 +2,15 @@
 
 import { images } from "@/data";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import CustomImage from "../CustomImage";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { initializeWeb5 } from "@/lib/state/web5Slice";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
+import { Button } from "../ui/button";
+import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
+import { useRouter } from "next/navigation";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
@@ -24,13 +26,27 @@ const navigations = [
 ];
 
 const Navbar = () => {
-
+  const router = useRouter();
   const dispatch = useAppDispatch();
-  const { status, error, isAuthenticated, did } = useAppSelector((state) => state.auth);
-
-  const handleSignUp = () => {
+  const { status, error, isAuthenticated, did, web5 } = useAppSelector((state) => state.auth);
+  console.log('Weeeeeb5:', web5);
+  const handleSignUp = useCallback(() => {
+    console.log('Signing up...');
     dispatch(initializeWeb5());
-  }
+  }, [dispatch]);
+
+  const handleLogout = useCallback(() => {
+    dispatch(logoutWeb5())
+    router.push('/');
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log('Auth state changed:', { status, isAuthenticated, did, error });
+    if (isAuthenticated && did) {
+      router.push('/dashboard');
+      console.log('Web5 instance:', web5);
+    }
+  }, [status, isAuthenticated, did, router, error]);
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -64,15 +80,16 @@ const Navbar = () => {
         </nav>
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
-            <Link
-              href={"/send-money"}
-              className={`px-6 py-2 capitalize rounded-full text-center flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear  ${String(pathname) === "/send-money"
-                ? "bg-primary-yellow text-black"
-                : "bg-black hover:bg-primary-yellow/70 hover:text-black text-white"
-                }`}
-            >
-              <span>Sign up</span>
-            </Link>
+            {!isAuthenticated ? (
+              <Button onClick={handleSignUp} disabled={status === 'loading'}>
+                {status === 'loading' ? 'Connecting...' : 'Sign up'}
+              </Button>
+            ) : (
+              <Button onClick={handleLogout}>Logout</Button>
+            )}
+            {did && <p>DID: {did}</p>}
+            {error && <p>Error: {error}</p>}
+            <p>Status: {status}</p>
           </div>
           <button
             type="button"
