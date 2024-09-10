@@ -1,56 +1,76 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { Web5 } from "@web5/api";
-interface Web5State {
-    web5: any | null;
-    did: string | null;
-    isAuthenticated: boolean;
-    status: 'idle' | 'loading' | 'failed' | 'succeeded';
-    error: any | null;
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
+interface Web5StateInitialStateProps {
+    did: null,
+    isAuthenticated: boolean,
+    status: string,
+    error: null,
+    loading: boolean,
+    web5: any[] | null,
 }
 
-const initialState: Web5State = {
-    web5: null,
+const initialState: Web5StateInitialStateProps = {
     did: null,
     isAuthenticated: false,
     status: 'idle',
     error: null,
+    loading: false,
+    web5: null,
 }
 
-export const initializeWeb5 = createAsyncThunk (
+export const initializeWeb5 = createAsyncThunk<
+    { did: string },
+    void,
+    { rejectValue: string }
+>(
     'auth/initializeweb5',
-    async ({rejectWithValue}: any) => 
-       {
+    async (_, { rejectWithValue }) => {
         try {
-            const {web5, did} = await Web5.connect();
-            return { web5, did};
+            console.log('Initializing Web5...');
+            const { Web5 } = await import('@web5/api');
+            const { web5, did } = await Web5.connect();
+            console.log('Web5 instance:', web5);
+            // Store the Web5 instance in the variable
+            console.log('Web5 initialized successfully. DID:', did);
+            return { did };
         } catch (error: any) {
-            return rejectWithValue(error.message || 'Failed to initialize web5');
+            console.error('Failed to initialize Web5:', error);
+            return rejectWithValue(error.message || 'Failed to initialize Web5');
         }
-       }
+    }
 );
 
 const web5Slice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-    //   setIsAuthenticated: (state, action: PayloadAction<boolean>) => {
-    //     state.isAuthenticated = action.payload;
-    //   },
+        logoutWeb5: (state) => {
+            state.did = null;
+            state.isAuthenticated = false;
+            state.status = 'idle';
+        }
     },
     extraReducers: (builder) => {
-        builder.addCase(initializeWeb5.pending, (state) => {
-            state.status = 'loading';
-        }).addCase(initializeWeb5.fulfilled, (state, action) => {
-            state.status = 'succeeded';
-            state.web5 = action.payload.web5;
-            state.did = action.payload.did;
-            state.isAuthenticated = true;
-            state.error = null;
-        }).addCase(initializeWeb5.rejected, (state, action : any) => {
-            state.status = 'failed';
-            state.error = action.payload?.message || action.error.message;
-        });
+        builder
+            .addCase(initializeWeb5.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+                state.loading = true;
+            })
+            .addCase(initializeWeb5.fulfilled, (state, action: any) => {
+                state.status = 'succeeded';
+                state.did = action.payload.did;
+                state.isAuthenticated = true;
+                state.error = null;
+                state.loading = false;
+            })
+            .addCase(initializeWeb5.rejected, (state, action: any) => {
+                state.status = 'failed';
+                state.error = action.payload || 'Unknown error occurred';
+                state.loading = false;
+            });
     }
-  });
+});
 
+export const { logoutWeb5 } = web5Slice.actions;
 export default web5Slice.reducer;
