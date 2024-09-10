@@ -7,6 +7,8 @@ import CustomImage from "../CustomImage";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { initializeWeb5 } from "@/lib/state/web5Slice";
+import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
@@ -22,6 +24,14 @@ const navigations = [
 ];
 
 const Navbar = () => {
+
+  const dispatch = useAppDispatch();
+  const { status, error, isAuthenticated, did } = useAppSelector((state) => state.auth);
+
+  const handleSignUp = () => {
+    dispatch(initializeWeb5());
+  }
+
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   return (
