@@ -3,7 +3,7 @@ import web5Reducer from "./web5Slice";
 
 export const store = configureStore({
   reducer: {
-    web5: web5Reducer,
+    auth: web5Reducer,
   },
 });
 
