@@ -41,14 +41,12 @@ const Navbar = () => {
             <Link
               key={index}
               href={nav.href}
-              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
-                nav.customClass
-              } 
-              ${
-                String(pathname) === nav.href
+              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
+                } 
+              ${String(pathname) === nav.href
                   ? "bg-primary-yellow"
                   : "bg-transparent hover:bg-primary-yellow/70"
-              }`}
+                }`}
             >
               <span>{nav.name}</span>
             </Link>
@@ -58,13 +56,12 @@ const Navbar = () => {
           <div className="text-[14px] hidden md:block">
             <Link
               href={"/send-money"}
-              className={`px-6 py-2 capitalize rounded-full text-center flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear  ${
-                String(pathname) === "/send-money"
-                  ? "bg-primary-yellow text-black"
-                  : "bg-black hover:bg-primary-yellow/70 hover:text-black text-white"
-              }`}
+              className={`px-6 py-2 capitalize rounded-full text-center flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear  ${String(pathname) === "/send-money"
+                ? "bg-primary-yellow text-black"
+                : "bg-black hover:bg-primary-yellow/70 hover:text-black text-white"
+                }`}
             >
-              <span>Send money</span>
+              <span>Sign up</span>
             </Link>
           </div>
           <button
@@ -103,14 +100,12 @@ const Navbar = () => {
                   key={nav.name}
                   href={nav.href}
                   className={`capitalize relative w-full border-black p-3 inline-flex 
-                    items-center justify-start space-x-5 rounded-lg ${
-                      nav.customClass
+                    items-center justify-start space-x-5 rounded-lg ${nav.customClass
                     }
-                   ${
-                     String(pathname) === nav.href
-                       ? "bg-primary-yellow"
-                       : "bg-white hover:bg-primary-yellow/70 text-black"
-                   }`}
+                   ${String(pathname) === nav.href
+                      ? "bg-primary-yellow"
+                      : "bg-white hover:bg-primary-yellow/70 text-black"
+                    }`}
                 >
                   <span>{nav.name}</span>
                 </Link>
