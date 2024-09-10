@@ -1,3 +1,4 @@
+import { handshakeInstallProtocol } from "@/data/handshakeProtocolDefinition";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 interface Web5StateInitialStateProps {
@@ -30,15 +31,17 @@ export const initializeWeb5 = createAsyncThunk<
             const { Web5 } = await import('@web5/api');
             const { web5, did } = await Web5.connect();
             console.log('Web5 instance:', web5);
+
             // Store the Web5 instance in the variable
             console.log('Web5 initialized successfully. DID:', did);
-            return { did };
+            return { web5, did };
         } catch (error: any) {
             console.error('Failed to initialize Web5:', error);
             return rejectWithValue(error.message || 'Failed to initialize Web5');
         }
     }
 );
+
 
 const web5Slice = createSlice({
     name: 'auth',
@@ -58,11 +61,17 @@ const web5Slice = createSlice({
                 state.loading = true;
             })
             .addCase(initializeWeb5.fulfilled, (state, action: any) => {
+                const Did = action.payload.did;
                 state.status = 'succeeded';
-                state.did = action.payload.did;
+                state.did = Did;
                 state.isAuthenticated = true;
                 state.error = null;
                 state.loading = false;
+                if (Did) {
+                   handshakeInstallProtocol(state.web5, Did);
+                    console.log('waiting for payload')
+                }
+                console.log("action-payloooad", action.payload.web5)
             })
             .addCase(initializeWeb5.rejected, (state, action: any) => {
                 state.status = 'failed';
