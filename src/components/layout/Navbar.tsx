@@ -6,11 +6,10 @@ import React, { useState, useCallback, useEffect } from "react";
 import CustomImage from "../CustomImage";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
-import { useRouter } from "next/navigation";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
@@ -62,22 +61,23 @@ const Navbar = () => {
             className="w-full h-full object-center object-cover"
           />
         </Link>
-        <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
-          {navigations.map((nav, index) => (
-            <Link
-              key={index}
-              href={nav.href}
-              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
-                } 
+        {pathname !== '/dashboard' &&
+          <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
+            {navigations.map((nav, index) => (
+              <Link
+                key={index}
+                href={nav.href}
+                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
+                  } 
               ${String(pathname) === nav.href
-                  ? "bg-primary-yellow"
-                  : "bg-transparent hover:bg-primary-yellow/70"
-                }`}
-            >
-              <span>{nav.name}</span>
-            </Link>
-          ))}
-        </nav>
+                    ? "bg-primary-yellow"
+                    : "bg-transparent hover:bg-primary-yellow/70"
+                  }`}
+              >
+                <span>{nav.name}</span>
+              </Link>
+            ))}
+          </nav>}
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
             {!isAuthenticated ? (
