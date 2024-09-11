@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
+import { fetchUserProfile } from "@/lib/state/userProfileSlice";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
@@ -30,6 +31,20 @@ const Navbar = () => {
   const { status, error, isAuthenticated, did, web5 } = useAppSelector(
     (state) => state.auth
   );
+
+  // fetch user profile
+  const handleFetchUserProfile = useCallback(() => {
+    console.log("Fetch profile button clicked");
+    console.log("web5:", web5);
+    console.log("did:", did);
+    if (web5 && did) {
+      console.log("Dispatching fetchUserProfile");
+      dispatch(fetchUserProfile({ web5, did }));
+    } else {
+      console.log("web5 or did is undefined");
+    }
+  }, [dispatch, web5, did]);
+
   // console.log('Weeeeeb5:', web5);
   const handleSignUp = useCallback(() => {
     // console.log('Signing up...');
@@ -69,14 +84,12 @@ const Navbar = () => {
               <Link
                 key={index}
                 href={nav.href}
-                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
-                  nav.customClass
-                } 
-              ${
-                String(pathname) === nav.href
-                  ? "bg-primary-yellow"
-                  : "bg-transparent hover:bg-primary-yellow/70"
-              }`}
+                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
+                  } 
+              ${String(pathname) === nav.href
+                    ? "bg-primary-yellow"
+                    : "bg-transparent hover:bg-primary-yellow/70"
+                  }`}
               >
                 <span>{nav.name}</span>
               </Link>
@@ -87,7 +100,7 @@ const Navbar = () => {
           <div className="text-[14px] hidden md:block">
             {!isAuthenticated ? (
               <Button onClick={handleSignUp} disabled={status === "loading"}>
-                {status === "loading" ? "Connecting..." : "Sign up"}
+                {status === "loading" ? "Connecting..." : "Connect"}
               </Button>
             ) : (
               <Button onClick={handleLogout}>Logout</Button>
@@ -100,6 +113,7 @@ const Navbar = () => {
             {error && <p>Error: {error}</p>}
             <p>Status: {status}</p>
           </div>
+          <Button onClick={handleFetchUserProfile}>Fetch Profile</Button>
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -136,14 +150,12 @@ const Navbar = () => {
                   key={nav.name}
                   href={nav.href}
                   className={`capitalize relative w-full border-black p-3 inline-flex 
-                    items-center justify-start space-x-5 rounded-lg ${
-                      nav.customClass
+                    items-center justify-start space-x-5 rounded-lg ${nav.customClass
                     }
-                   ${
-                     String(pathname) === nav.href
-                       ? "bg-primary-yellow"
-                       : "bg-white hover:bg-primary-yellow/70 text-black"
-                   }`}
+                   ${String(pathname) === nav.href
+                      ? "bg-primary-yellow"
+                      : "bg-white hover:bg-primary-yellow/70 text-black"
+                    }`}
                 >
                   <span>{nav.name}</span>
                 </Link>

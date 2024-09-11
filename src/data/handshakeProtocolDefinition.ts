@@ -3,7 +3,7 @@ const handshakeProtocol = {
   published: true,
   types: {
     users: {
-      schema: "https://handshake.example/usersSchema",
+      schema: "https://handshake.example/users",
       dataFormats: ["application/json"],
     },
   },

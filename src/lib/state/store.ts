@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import web5Reducer from "./web5Slice";
+import userProfileReducer from "./userProfileSlice";
 
 export const store = configureStore({
   reducer: {
     auth: web5Reducer,
+    userProfile: userProfileReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

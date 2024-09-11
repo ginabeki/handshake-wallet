@@ -19,8 +19,9 @@ const initialState: Web5StateInitialStateProps = {
   web5: null,
 };
 
+
 export const initializeWeb5 = createAsyncThunk<
-  { did: string },
+  { web5: any, did: string },
   void,
   { rejectValue: string }
 >("auth/initializeweb5", async (_, { rejectWithValue }) => {
@@ -47,6 +48,7 @@ const web5Slice = createSlice({
       state.did = null;
       state.isAuthenticated = false;
       state.status = "idle";
+      state.web5 = null;
     },
   },
   extraReducers: (builder) => {
@@ -59,6 +61,7 @@ const web5Slice = createSlice({
       .addCase(initializeWeb5.fulfilled, (state, action: any) => {
         const Did = action.payload.did;
         const Web5 = action.payload.web5;
+        state.web5 = Web5;
         state.status = "succeeded";
         state.did = Did;
         state.isAuthenticated = true;
@@ -72,6 +75,7 @@ const web5Slice = createSlice({
         state.status = "failed";
         state.error = action.payload || "Unknown error occurred";
         state.loading = false;
+        state.web5 = null;
       });
   },
 });
