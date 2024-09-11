@@ -155,27 +155,6 @@ const Navbar = () => {
         )}
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
-            {/* {!isAuthenticated ? (
-              <Button onClick={handleSignUp} disabled={status === "loading"}>
-                {status === "loading" ? "Connecting..." : "Connect"}
-              </Button>
-            ) : (
-              <>
-                <Button onClick={handleLogout}>Logout</Button>
-                {!profile ? (
-                  <Button onClick={handleCreateProfile}>Create Profile</Button>
-                ) : (
-                  <Button onClick={handleFetchUserProfile}>
-                    Fetch Profile
-                  </Button>
-                )}
-              </>
-            )}
-            {isAuthenticated && profile && (
-              <Button onClick={handleUpdateProfile} disabled={profileStatus === 'loading'}>
-                {profileStatus === 'loading' ? 'Updating...' : 'Update Profile'}
-              </Button>
-            )} */}
             {!isAuthenticated ? (
               <Button onClick={handleSignUp} disabled={status === "loading"}>
                 {status === "loading" ? "Connecting..." : "Connect"}
