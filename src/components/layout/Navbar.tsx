@@ -10,7 +10,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
-import { fetchUserProfile } from "@/lib/state/userProfileSlice";
+import {
+  fetchUserProfile,
+  createUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
+} from "@/lib/state/userProfileSlice";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
@@ -31,6 +36,7 @@ const Navbar = () => {
   const { status, error, isAuthenticated, did, web5 } = useAppSelector(
     (state) => state.auth
   );
+  const { data: profile, status: profileStatus } = useAppSelector((state) => state.userProfile);
 
   // fetch user profile
   const handleFetchUserProfile = useCallback(() => {
@@ -45,9 +51,60 @@ const Navbar = () => {
     }
   }, [dispatch, web5, did]);
 
-  // console.log('Weeeeeb5:', web5);
+  // create user profile
+  const handleCreateProfile = useCallback(() => {
+    if (web5 && did) {
+      const newProfile = {
+        name: "John Doe",
+        bio: "A software engineer",
+        location: "Nairobi, kENYA",
+      };
+      dispatch(createUserProfile({ web5, did, profile: newProfile }));
+    } else {
+      console.log("web5 or did is undefined");
+    }
+  }, [dispatch, web5, did]);
+
+  // Update user profile
+  const handleUpdateProfile = useCallback(async () => {
+    if (web5 && did && profile) {
+      const updatedProfile = {
+        name: profile.name,
+        bio: "Updated bio for John Doe",
+        location: profile.location
+      };
+      console.log("Dispatching updateUserProfile with:", { web5, did, profile: updatedProfile });
+      try {
+        const result = await dispatch(updateUserProfile({ web5, did, profile: updatedProfile })).unwrap();
+        console.log("Profile updated successfully:", result);
+        // Optionally, you can fetch the updated profile here
+        dispatch(fetchUserProfile({ web5, did }));
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+        // Handle the error (e.g., show an error message to the user)
+      }
+    } else {
+      console.log("Cannot update profile:", { web5, did, profile });
+    }
+  }, [dispatch, web5, did, profile]);
+
+  // Delete user profile
+  const handleDeleteProfile = useCallback(async () => {
+    if (web5 && did) {
+      try {
+        const result = await dispatch(deleteUserProfile({ web5, did })).unwrap();
+        console.log("Profile deleted successfully:", result);
+        // Optionally, you can redirect the user or show a success message
+      } catch (error) {
+        console.error("Failed to delete profile:", error);
+        // Handle the error (e.g., show an error message to the user)
+      }
+    } else {
+      console.log("Cannot delete profile:", { web5, did });
+    }
+  }, [dispatch, web5, did]);
+
   const handleSignUp = useCallback(() => {
-    // console.log('Signing up...');
     dispatch(initializeWeb5());
   }, [dispatch]);
 
@@ -98,12 +155,48 @@ const Navbar = () => {
         )}
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
+            {/* {!isAuthenticated ? (
+              <Button onClick={handleSignUp} disabled={status === "loading"}>
+                {status === "loading" ? "Connecting..." : "Connect"}
+              </Button>
+            ) : (
+              <>
+                <Button onClick={handleLogout}>Logout</Button>
+                {!profile ? (
+                  <Button onClick={handleCreateProfile}>Create Profile</Button>
+                ) : (
+                  <Button onClick={handleFetchUserProfile}>
+                    Fetch Profile
+                  </Button>
+                )}
+              </>
+            )}
+            {isAuthenticated && profile && (
+              <Button onClick={handleUpdateProfile} disabled={profileStatus === 'loading'}>
+                {profileStatus === 'loading' ? 'Updating...' : 'Update Profile'}
+              </Button>
+            )} */}
             {!isAuthenticated ? (
               <Button onClick={handleSignUp} disabled={status === "loading"}>
                 {status === "loading" ? "Connecting..." : "Connect"}
               </Button>
             ) : (
-              <Button onClick={handleLogout}>Logout</Button>
+              <>
+                <Button onClick={handleLogout}>Logout</Button>
+                {!profile ? (
+                  <Button onClick={handleCreateProfile}>Create Profile</Button>
+                ) : (
+                  <>
+                    <Button onClick={handleFetchUserProfile}>Fetch Profile</Button>
+                    <Button onClick={handleUpdateProfile} disabled={profileStatus === 'loading'}>
+                      {profileStatus === 'loading' ? 'Updating...' : 'Update Profile'}
+                    </Button>
+                    <Button onClick={handleDeleteProfile} disabled={profileStatus === 'loading'}>
+                      Delete Profile
+                    </Button>
+                  </>
+                )}
+              </>
             )}
             {did && (
               <p>
@@ -113,7 +206,6 @@ const Navbar = () => {
             {error && <p>Error: {error}</p>}
             <p>Status: {status}</p>
           </div>
-          <Button onClick={handleFetchUserProfile}>Fetch Profile</Button>
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
