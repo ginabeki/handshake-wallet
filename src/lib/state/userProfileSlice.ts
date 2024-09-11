@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { handshakeInstallProtocol } from "@/data/handshakeProtocolDefinition";
+import { handshakeInstallProtocol, handshakeProtocol } from "@/data/handshakeProtocolDefinition";
 interface Profile {
     name: string;
     bio: string;
@@ -16,34 +16,36 @@ const initialState: Profile = {
     location: "",
     status: 'idle',
     error: null,
-}
-
+};
 
 export const fetchUserProfile = createAsyncThunk(
     'userProfile/fetchUserProfile',
-    async (data:{ web5:any, did:string }, { rejectWithValue }) => {
+    async (data: { web5: any, did: string }, { rejectWithValue }) => {
         console.log("Thunk started executing");
         try {
-            const  response = await data.web5.dwn.records.query({
+            const response = await data.web5.dwn.records.query({
                 message: {
                     filter: {
-                        protocol: handshakeInstallProtocol.protocol,
-                        schema: handshakeInstallProtocol.types.users.schema
+                        protocol: handshakeProtocol.protocol,
+                        schema: handshakeProtocol.types.users.schema,
+                        dataFormat: "application/json"
+
                     },
                 },
             });
-
             if (response.status.code === 200) {
                 const result = await Promise.all(
                     response.records.map(async (record: any) => {
-                        const {data} = record;
+                        const {data} = await record;
                         console.log('data.jsonnn', data.json());
-                        return await data.json();
+                        return data.json();
                     })
                 );
+                console.log('result', result);
                 return result;
             } else {
-                return rejectWithValue("No profile found");
+                console.log("error", response.status)
+                return rejectWithValue("No profile found",);
             }
         } catch (error) {
             console.error("Error fetching profile:", error);
@@ -52,32 +54,30 @@ export const fetchUserProfile = createAsyncThunk(
     }
 );
 
-
-  const userProfileSlice = createSlice({
+const userProfileSlice = createSlice({
     name: "userProfile",
     initialState,
     reducers: {
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchUserProfile.pending, (state:any) => {
-                // state.name = "";
-                // state.bio = "";
-                // state.location = "";
-                console.log("Failed to fetch user profile data pending")
+            .addCase(fetchUserProfile.pending, (state: any) => {
+                state.name = "";
+                state.bio = "";
+                state.location = "";
             })
-            .addCase(fetchUserProfile.fulfilled, (state, action:any) => {
-                // state.name = action.payload.name;
+            .addCase(fetchUserProfile.fulfilled, (state, action: any) => {
+                state.name = action.payload.name;
                 state.data = action.payload;
                 console.log('action.payload', action.payload);
-                // state.bio = action.payload.bio;
-                // state.location = action.payload.location;
-                console.log("Failed to fetch user profile data fullfilled", action.error)
-
-            }).addCase(fetchUserProfile.rejected, (action: any) => {
-               console.log("Failed to fetch user profile data", action.error)
+                state.bio = action.payload.bio;
+                state.location = action.payload.location;
+            }).addCase(fetchUserProfile.rejected, (state, action: any) => {
+                state.error = action.error.message;
+                state.data = null;
+                console.log("Failed to fetch user profile data", action.error)
             })
     }
-  })
+})
 
 export default userProfileSlice.reducer;

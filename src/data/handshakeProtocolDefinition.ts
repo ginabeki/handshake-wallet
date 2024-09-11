@@ -1,4 +1,4 @@
-const handshakeProtocol = {
+export const handshakeProtocol = {
   protocol: "https://handshake.example",
   published: true,
   types: {
