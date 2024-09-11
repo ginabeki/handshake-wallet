@@ -28,9 +28,9 @@ const Navbar = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { status, error, isAuthenticated, did, web5 } = useAppSelector((state) => state.auth);
-  console.log('Weeeeeb5:', web5);
+  // console.log('Weeeeeb5:', web5);
   const handleSignUp = useCallback(() => {
-    console.log('Signing up...');
+    // console.log('Signing up...');
     dispatch(initializeWeb5());
   }, [dispatch]);
 
@@ -40,10 +40,10 @@ const Navbar = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('Auth state changed:', { status, isAuthenticated, did, error });
+    // console.log('Auth state changed:', { status, isAuthenticated, did, error });
     if (isAuthenticated && did) {
       router.push('/dashboard');
-      console.log('Web5 instance:', web5);
+      // console.log('Web5 instance:', web5);
     }
   }, [status, isAuthenticated, did, router, error]);
 
