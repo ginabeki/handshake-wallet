@@ -16,17 +16,15 @@ const handshakeProtocol = {
 
 export const handshakeInstallProtocol = async (web5: any, did: string) => {
   if (!web5) {
-    console.error("Web5 instance is not properly initialized");
     return;
   }
   try {
-    // console.log("Configuring protocol...");
     const { protocol } = await web5.dwn.protocols.configure({
       message: {
         definition: handshakeProtocol,
       },
     });
-    // console.log("Protocol configured, sending...");
+
     await protocol.send(did);
     console.log("Handshake protocol installed successfully");
   } catch (error) {

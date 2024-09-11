@@ -58,16 +58,15 @@ const web5Slice = createSlice({
       })
       .addCase(initializeWeb5.fulfilled, (state, action: any) => {
         const Did = action.payload.did;
+        const Web5 = action.payload.web5;
         state.status = "succeeded";
         state.did = Did;
         state.isAuthenticated = true;
         state.error = null;
         state.loading = false;
-        if (Did) {
-          handshakeInstallProtocol(action.payload.web5, Did);
-          //   console.log("waiting for payload");
+        if (Web5 && Did) {
+          handshakeInstallProtocol(Web5, Did);
         }
-        // console.log("action-payloooad", action.payload.web5);
       })
       .addCase(initializeWeb5.rejected, (state, action: any) => {
         state.status = "failed";

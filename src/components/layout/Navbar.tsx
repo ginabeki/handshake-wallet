@@ -27,7 +27,9 @@ const navigations = [
 const Navbar = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { status, error, isAuthenticated, did, web5 } = useAppSelector((state) => state.auth);
+  const { status, error, isAuthenticated, did, web5 } = useAppSelector(
+    (state) => state.auth
+  );
   // console.log('Weeeeeb5:', web5);
   const handleSignUp = useCallback(() => {
     // console.log('Signing up...');
@@ -35,14 +37,14 @@ const Navbar = () => {
   }, [dispatch]);
 
   const handleLogout = useCallback(() => {
-    dispatch(logoutWeb5())
-    router.push('/');
-  }, [dispatch]);
+    dispatch(logoutWeb5());
+    router.push("/");
+  }, [dispatch, router]);
 
   useEffect(() => {
     // console.log('Auth state changed:', { status, isAuthenticated, did, error });
     if (isAuthenticated && did) {
-      router.push('/dashboard');
+      router.push("/dashboard");
       // console.log('Web5 instance:', web5);
     }
   }, [status, isAuthenticated, did, router, error]);
@@ -61,33 +63,40 @@ const Navbar = () => {
             className="w-full h-full object-center object-cover"
           />
         </Link>
-        {pathname !== '/dashboard' &&
+        {pathname !== "/dashboard" && (
           <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
             {navigations.map((nav, index) => (
               <Link
                 key={index}
                 href={nav.href}
-                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
-                  } 
-              ${String(pathname) === nav.href
-                    ? "bg-primary-yellow"
-                    : "bg-transparent hover:bg-primary-yellow/70"
-                  }`}
+                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
+                  nav.customClass
+                } 
+              ${
+                String(pathname) === nav.href
+                  ? "bg-primary-yellow"
+                  : "bg-transparent hover:bg-primary-yellow/70"
+              }`}
               >
                 <span>{nav.name}</span>
               </Link>
             ))}
-          </nav>}
+          </nav>
+        )}
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
             {!isAuthenticated ? (
-              <Button onClick={handleSignUp} disabled={status === 'loading'}>
-                {status === 'loading' ? 'Connecting...' : 'Sign up'}
+              <Button onClick={handleSignUp} disabled={status === "loading"}>
+                {status === "loading" ? "Connecting..." : "Sign up"}
               </Button>
             ) : (
               <Button onClick={handleLogout}>Logout</Button>
             )}
-            {did && <p>DID: {did}</p>}
+            {did && (
+              <p>
+                DID: {did.slice(0, 5)} ... {did.slice(-5)}
+              </p>
+            )}
             {error && <p>Error: {error}</p>}
             <p>Status: {status}</p>
           </div>
@@ -127,12 +136,14 @@ const Navbar = () => {
                   key={nav.name}
                   href={nav.href}
                   className={`capitalize relative w-full border-black p-3 inline-flex 
-                    items-center justify-start space-x-5 rounded-lg ${nav.customClass
+                    items-center justify-start space-x-5 rounded-lg ${
+                      nav.customClass
                     }
-                   ${String(pathname) === nav.href
-                      ? "bg-primary-yellow"
-                      : "bg-white hover:bg-primary-yellow/70 text-black"
-                    }`}
+                   ${
+                     String(pathname) === nav.href
+                       ? "bg-primary-yellow"
+                       : "bg-white hover:bg-primary-yellow/70 text-black"
+                   }`}
                 >
                   <span>{nav.name}</span>
                 </Link>
