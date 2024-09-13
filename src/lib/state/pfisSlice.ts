@@ -29,6 +29,7 @@ export const getOfferings = createAsyncThunk(
 
           return {
             pfiName: pfi.name,
+            pfiDid: pfi.did,
             offerings,
           };
         })

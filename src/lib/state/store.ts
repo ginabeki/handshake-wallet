@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import web5Reducer from "./web5Slice";
 import userProfileReducer from "./userProfileSlice";
 import pfisReducer from "./pfisSlice";
+import vcReducer from "./vcSlice";
 
 export const store = configureStore({
   reducer: {
     auth: web5Reducer,
     userProfile: userProfileReducer,
     pfis: pfisReducer,
+    kcc: vcReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
