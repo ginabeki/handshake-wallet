@@ -6,10 +6,37 @@ export const handshakeProtocol = {
       schema: "https://handshake.example/users",
       dataFormats: ["application/json"],
     },
+    marketplaceItem: {
+      schema: "https://handshake.example/marketplaceItem",
+      dataFormats: ["application/json"],
+    },
+    marketplace: {
+      schema: "https://handshake.example/marketplace",
+      dataFormats: ["application/json"],
+    },
+    marketplaceMessage: {
+      schema: "https://handshake.example/marketplaceMessage",
+      dataFormats: ["application/json"],
+    },
   },
   structure: {
     users: {
+      $actions: [{ who: "anyone", can: ["create", "read", "update"] }],
+    },
+    marketplace: {
       $actions: [{ who: "anyone", can: ["create", "read"] }],
+      marketplaceItem: {
+        $actions: [
+          { who: "anyone", can: ["read"] },
+          { who: "author", of: "marketplaceItem", can: ["create", "update", "delete"] },
+        ],
+      },
+      marketplaceMessage: {
+        $actions: [
+          { who: "author", of: "marketplaceItem", can: ["read"] },
+          { who: "recipient", of: "marketplaceMessage", can: ["create", "read"] },
+        ],
+      },
     },
   },
 };
