@@ -1,20 +1,19 @@
 import { configureStore } from "@reduxjs/toolkit";
 import web5Reducer from "./web5Slice";
 import userProfileReducer from "./userProfileSlice";
+import createListingReducer from "./marketplaceSlice";
 
 export const store = configureStore({
   reducer: {
     auth: web5Reducer,
     userProfile: userProfileReducer,
+    marketplace: createListingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore these action types
         ignoredActions: ['auth/initializeweb5/fulfilled'],
-        // Ignore these field paths in all actions
         ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
-        // Ignore these paths in the state
         ignoredPaths: ['items.dates'],
       },
     }),
