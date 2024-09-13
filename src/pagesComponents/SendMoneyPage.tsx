@@ -1,6 +1,6 @@
 "use client";
 
-import { pfisList } from "@/data";
+import { pfisList, currenciesList } from "@/data";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { getOfferings } from "@/lib/state/pfisSlice";
 import React, { useEffect, useState } from "react";
@@ -16,18 +16,35 @@ const SendMoneyPage = () => {
     payout: "",
   });
 
+  const filteredOfferings = Array.isArray(offerings)
+    ? offerings.filter((offering: any) => {
+        const matchingOfferings = (offering.offerings || []).filter(
+          (off: any) => {
+            const payinMatch =
+              currencyCodes.payin === "" ||
+              off.data.payin.currencyCode === currencyCodes.payin;
+            const payoutMatch =
+              currencyCodes.payout === "" ||
+              off.data.payout.currencyCode === currencyCodes.payout;
+            return payinMatch && payoutMatch;
+          }
+        );
+        return matchingOfferings.length > 0;
+      })
+    : [];
+
+  console.log("filteredOfferings", filteredOfferings);
+
   const handleCurrencyCodeChange = (e: any) => {
-    setCurrencyCodes({
-      ...currencyCodes,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setCurrencyCodes((prev: any) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   useEffect(() => {
     if (pfisList.length > 0) {
-      // pfisList.forEach((pfi) => {
-      //   dispatch(getOfferings(pfi.did));
-      // });
       dispatch(getOfferings(pfisList));
     }
   }, [dispatch]);
@@ -40,55 +57,70 @@ const SendMoneyPage = () => {
     <main className="w-full mx-auto">
       <form className="space-x-10 mb-10">
         <div className="inline-flex items-center justify-start space-x-5">
-          <label>Your send</label>
-          <input
-            type="text"
+          <label>From</label>
+          <select
             name="payin"
             id="payin"
-            maxLength={5}
-            placeholder="currency code"
             value={currencyCodes.payin}
             onChange={handleCurrencyCodeChange}
-          />
+          >
+            <option value="">Select</option>
+            {currenciesList.map((currency: any, index: any) => (
+              <option key={index} value={currency.code}>
+                {currency.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="inline-flex items-center justify-start space-x-5">
-          <label>Your send</label>
-          <input
-            type="text"
+          <label>To</label>
+          <select
             name="payout"
             id="payout"
-            maxLength={5}
-            placeholder="currency code"
             value={currencyCodes.payout}
             onChange={handleCurrencyCodeChange}
-          />
+          >
+            <option value="">Select</option>
+            {currenciesList.map((currency: any, index: any) => (
+              <option key={index} value={currency.code}>
+                {currency.name}
+              </option>
+            ))}
+          </select>
         </div>
       </form>
 
       <div>
-        <p>You send {currencyCodes.payin}</p>
-        <p>they recieved {currencyCodes.payout}</p>
+        <p>You send: {currencyCodes.payin || "Any"}</p>
+        <p>They receive: {currencyCodes.payout || "Any"}</p>
       </div>
 
-      <div className="flex flex-col items-center justify-center space-y-10">
-        {Array.isArray(offerings) && offerings.length > 0 ? (
-          offerings.map((allOfferings: any) =>
-            allOfferings.map((offering: any, index: any) => {
-              return (
-                <div key={index} className="bg-gray-200 w-full p-2">
-                  <div>
-                    {offering.data.payin.currencyCode} -{" "}
-                    {offering.data.payout.currencyCode}
-                  </div>
-                  <div>{offering.data.description}</div>
-                </div>
-              );
-            })
-          )
-        ) : (
-          <div>No offerings found</div>
-        )}
-        {}
+      <div className="flex flex-col items-center justify-start space-y-5">
+        {filteredOfferings.map((offering: any, index: any) => (
+          <div
+            key={index}
+            className="flex flex-col items-center justify-start space-y-5 p-5 border border-gray-300 rounded-md"
+          >
+            <p>{offering.pfiName}</p>
+            {offering.offerings
+              .filter((off: any) => {
+                const payinMatch =
+                  currencyCodes.payin === "" ||
+                  off.data.payin.currencyCode === currencyCodes.payin;
+                const payoutMatch =
+                  currencyCodes.payout === "" ||
+                  off.data.payout.currencyCode === currencyCodes.payout;
+                return payinMatch && payoutMatch;
+              })
+              .map((off: any, idx: any) => (
+                <p key={idx}>
+                  {off.data.payin.amount} {off.data.payin.currencyCode} to{" "}
+                  {off.data.payout.amount} {off.data.payout.currencyCode}
+                </p>
+              ))}
+            <button>Send Money</button>
+          </div>
+        ))}
       </div>
     </main>
   );

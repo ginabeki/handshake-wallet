@@ -19,20 +19,15 @@ const initialState: Web5StateInitialStateProps = {
   web5: null,
 };
 
-
 export const initializeWeb5 = createAsyncThunk<
-  { web5: any, did: string },
+  { web5: any; did: string },
   void,
   { rejectValue: string }
 >("auth/initializeweb5", async (_, { rejectWithValue }) => {
   try {
-    // console.log("Initializing Web5...");
     const { Web5 } = await import("@web5/api");
     const { web5, did } = await Web5.connect();
-    // console.log("Web5 instance:", web5);
 
-    // Store the Web5 instance in the variable
-    // console.log("Web5 initialized successfully. DID:", did);
     return { web5, did };
   } catch (error: any) {
     console.error("Failed to initialize Web5:", error);

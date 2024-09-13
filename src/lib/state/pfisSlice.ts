@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-// import { TbdexHttpClient } from "@tbdex/http-client";
 
 interface Pfis {
   offerings: any;
@@ -15,35 +14,26 @@ const initialState: Pfis = {
   status: "idle",
 };
 
-// export const getOfferings = createAsyncThunk(
-//   "pfis/getOfferings",
-//   async (pfiDid: string, { rejectWithValue }) => {
-//     const { TbdexHttpClient } = await import("@tbdex/http-client");
-//     try {
-//       const offerings = await TbdexHttpClient.getOfferings({ pfiDid: pfiDid });
-//       console.log("Offerings:", offerings);
-//       return offerings;
-//     } catch (error: any) {
-//       console.error("Error fetching offerings:", error);
-//       return rejectWithValue(error.message || "Error fetching offerings");
-//     }
-//   }
-// );
-
 export const getOfferings = createAsyncThunk(
   "pfis/getOfferings",
-  async (pfisDid: any, { rejectWithValue }) => {
+  async (pfisList: any, { rejectWithValue }) => {
     const { TbdexHttpClient } = await import("@tbdex/http-client");
     try {
-      //   const offerings = await TbdexHttpClient.getOfferings({ pfiDid: pfiDid });
-
       const allAfferings = await Promise.all(
-        pfisDid.map(async (pfi: any) => {
-          return await TbdexHttpClient.getOfferings({ pfiDid: pfi.did });
+        pfisList.map(async (pfi: any) => {
+          const offers = await TbdexHttpClient.getOfferings({
+            pfiDid: pfi.did,
+          });
+
+          const offerings = JSON.parse(JSON.stringify(offers));
+
+          return {
+            pfiName: pfi.name,
+            offerings,
+          };
         })
       );
-
-      console.log("Offerings:", allAfferings);
+      console.log("allAfferings", allAfferings);
       return allAfferings;
     } catch (error: any) {
       console.error("Error fetching offerings:", error);
