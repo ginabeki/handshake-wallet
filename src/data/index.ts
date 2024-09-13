@@ -1,3 +1,4 @@
 import { images } from "./image";
+import { pfisList } from "./pfisList";
 
-export { images };
+export { images, pfisList };
