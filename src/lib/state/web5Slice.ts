@@ -7,7 +7,7 @@ interface Web5StateInitialStateProps {
   status: string;
   error: null;
   loading: boolean;
-  web5: any[] | null;
+  web5: any | null;
 }
 
 const initialState: Web5StateInitialStateProps = {
@@ -18,7 +18,6 @@ const initialState: Web5StateInitialStateProps = {
   loading: false,
   web5: null,
 };
-
 
 export const initializeWeb5 = createAsyncThunk<
   { web5: any, did: string },
