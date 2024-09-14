@@ -1,5 +1,5 @@
 import { images } from "./image";
 import { pfisList } from "./pfisList";
-import { currenciesList } from "./currencies";
+import { currenciesList, rates } from "./currencies";
 
-export { images, pfisList, currenciesList };
+export { images, pfisList, currenciesList, rates };

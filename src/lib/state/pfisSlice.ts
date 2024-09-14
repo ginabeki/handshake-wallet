@@ -34,7 +34,7 @@ export const getOfferings = createAsyncThunk(
           };
         })
       );
-      console.log("allAfferings", allAfferings);
+
       return allAfferings;
     } catch (error: any) {
       console.error("Error fetching offerings:", error);
