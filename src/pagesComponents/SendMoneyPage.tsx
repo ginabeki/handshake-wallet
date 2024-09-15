@@ -141,16 +141,16 @@ const SendMoneyPage = () => {
   // Filter out offerings that match the selected currencies
   const filteredOfferings = Array.isArray(offerings)
     ? offerings
-        .map((pfi: any) => ({
-          ...pfi,
-          offerings: pfi.offerings.filter(
-            (offering: any) =>
-              offering.data.payin.currencyCode === currencyCodes.payin &&
-              offering.data.payout.currencyCode === currencyCodes.payout
-          ),
-        }))
-        // Filter out PFIs without matching offerings
-        .filter((pfi: any) => pfi.offerings.length > 0)
+      .map((pfi: any) => ({
+        ...pfi,
+        offerings: pfi.offerings.filter(
+          (offering: any) =>
+            offering.data.payin.currencyCode === currencyCodes.payin &&
+            offering.data.payout.currencyCode === currencyCodes.payout
+        ),
+      }))
+      // Filter out PFIs without matching offerings
+      .filter((pfi: any) => pfi.offerings.length > 0)
     : [];
 
   // verify user
@@ -410,7 +410,7 @@ const SendMoneyPage = () => {
                                           </span>
                                           {pfi.offerings.map(
                                             (offering: any, index: number) => (
-                                              <div className="relative p-2 bg-green-50 rounded-md w-full flex flex-col items-start justify-start space-y-2">
+                                              <div key={index} className="relative p-2 bg-green-50 rounded-md w-full flex flex-col items-start justify-start space-y-2">
                                                 <div className="w-full inline-flex items-center justify-between">
                                                   <div className="inline-flex items-center justify-start">
                                                     <span className="font-semibold text-[14px]">
@@ -463,7 +463,7 @@ const SendMoneyPage = () => {
                                                   <span>to</span>
                                                   {offering.data?.payout?.methods?.map(
                                                     (method: any) => (
-                                                      <div className="text-primary-green font-medium">
+                                                      <div key={index} className="text-primary-green font-medium">
                                                         {method.kind}
                                                       </div>
                                                     )
@@ -472,7 +472,7 @@ const SendMoneyPage = () => {
                                                 <div>
                                                   {offering.data?.payout?.methods?.map(
                                                     (method: any) => (
-                                                      <div>
+                                                      <div key={index}>
                                                         <span className="text-black">
                                                           Speed :
                                                         </span>{" "}
@@ -520,9 +520,8 @@ const SendMoneyPage = () => {
                           {/* Next button */}
                           {filteredOfferings.length > 0 && (
                             <div
-                              className={`w-auto flex flex-row items-center ${
-                                step > 1 ? "justify-between" : "justify-end"
-                              }`}
+                              className={`w-auto flex flex-row items-center ${step > 1 ? "justify-between" : "justify-end"
+                                }`}
                             >
                               {step > 1 && (
                                 <button
@@ -636,9 +635,8 @@ const SendMoneyPage = () => {
                     </button>
                   )}
                   <div
-                    className={`w-auto flex flex-row items-center ${
-                      step > 1 ? "justify-between" : "justify-end"
-                    }`}
+                    className={`w-auto flex flex-row items-center ${step > 1 ? "justify-between" : "justify-end"
+                      }`}
                   >
                     {step > 1 && (
                       <button

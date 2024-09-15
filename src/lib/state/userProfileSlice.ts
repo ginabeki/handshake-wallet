@@ -10,7 +10,6 @@ interface Profile {
   location: string;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
-  vcjtws: string;
 }
 
 const initialState: Profile = {
@@ -20,7 +19,6 @@ const initialState: Profile = {
   location: "",
   status: "idle",
   error: null,
-  vcjtws: "",
 };
 
 export const fetchUserProfile = createAsyncThunk(

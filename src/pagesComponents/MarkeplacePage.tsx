@@ -10,8 +10,7 @@ import CustomImage from '@/components/CustomImage';
 
 const MarketplacePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const { web5, did, isAuthenticated, publicDid } = useAppSelector((state) => state.auth);
+  const { web5, isAuthenticated } = useAppSelector((state) => state.auth);
   const { items, status, error } = useAppSelector((state) => state.marketplace);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 

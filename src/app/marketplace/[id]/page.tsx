@@ -61,7 +61,7 @@ const ItemDetails: React.FC = () => {
             className="w-full h-64 object-cover mb-4"
           />
           <div className="flex space-x-2">
-            {item.photos.slice(1).map((photo, index) => (
+            {item.photos.slice(1).map((photo: any, index: number) => (
               <img
                 key={index}
                 src={photo}

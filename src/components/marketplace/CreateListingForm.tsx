@@ -26,7 +26,7 @@ const CreateListingForm = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const createListing = async (event: React.FormEvent) => {
+    const createListing = async (event: React.FormEvent, web5: any) => {
         event.preventDefault();
         setLoading(true);
 
@@ -83,7 +83,7 @@ const CreateListingForm = () => {
     };
 
     return (
-        <form onSubmit={createListing} className="space-y-4">
+        <form onSubmit={(e) => createListing(e, web5)} className="space-y-4">
             <div>
                 <label htmlFor="title" className="block mb-2 text-[16px] font-medium text-gray-900">
                     Title <span className="text-red-500">*</span>
