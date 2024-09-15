@@ -4,6 +4,7 @@ import userProfileReducer from "./userProfileSlice";
 import pfisReducer from "./pfisSlice";
 import vcReducer from "./vcSlice";
 import createListingReducer from "./marketplaceSlice";
+import messageReducer from './messageSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     pfis: pfisReducer,
     kcc: vcReducer,
     marketplace: createListingReducer,
+    messages: messageReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
