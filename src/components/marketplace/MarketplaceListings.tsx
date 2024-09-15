@@ -36,7 +36,7 @@ const MarketplaceListings: React.FC = () => {
                 {filteredItems.map((item) => (
                     <Link href={`/marketplace/${item.id}`} key={item.id}>
                         <div className="border rounded p-4 hover:shadow-lg transition-shadow">
-                            <img src={item.photos[0]} alt={item.title} className="w-full h-48 object-cover mb-2" />
+                            <img src={item.photos} alt={item.title} className="w-full h-48 object-cover mb-2" />
                             <h3 className="font-bold">{item.title}</h3>
                             <p>${item.price}</p>
                             <p>{item.condition}</p>

@@ -26,41 +26,6 @@ const MarketplacePage: React.FC = () => {
     setShowAuthPrompt(false);
   };
 
-  const fetchImage = async (recordId: string) => {
-    if (web5) {
-      try {
-        const { record } = await web5.dwn.records.read({
-          message: {
-            filter: {
-              recordId: recordId
-            }
-          }
-        });
-
-        if (!record) {
-          console.error(`No record found for ID: ${recordId}`);
-          return null;
-        }
-
-        if (!record.data) {
-          console.error(`Record found, but data is undefined for ID: ${recordId}`);
-          return null;
-        }
-
-        const blob = await record.data.blob();
-        if (!blob) {
-          console.error(`Failed to get blob from record data for ID: ${recordId}`);
-          return null;
-        }
-
-        return URL.createObjectURL(blob);
-      } catch (error) {
-        console.error('Error fetching image:', error);
-        return null;
-      }
-    }
-    return null;
-  };
 
   if (status === 'loading') return <div>Loading...</div>;
   if (status === 'failed') return <div>Error: {error}</div>;
@@ -100,9 +65,9 @@ const MarketplacePage: React.FC = () => {
             <div className="border rounded p-4 hover:shadow-lg transition-shadow">
               {item.photos && item.photos.length > 0 && (
                 <CustomImage
-                  width={300}
-                  height={250}
-                  src={fetchImage(item.photos[0])}
+                  width={1000}
+                  height={1000}
+                  src={item.photos}
                   alt={item.title}
                   className="w-full h-48 object-cover mb-2"
                 />

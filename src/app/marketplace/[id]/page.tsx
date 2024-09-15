@@ -5,12 +5,13 @@ import { useAppSelector, useAppDispatch } from '@/lib/state/hooks';
 import { useParams } from 'next/navigation';
 import { fetchListings } from '@/lib/state/marketplaceSlice';
 import { handshakeProtocol } from '@/data/handshakeProtocolDefinition';
+import { constantPublicDid as publicDid } from '@/data/constant';
 
 const ItemDetails: React.FC = () => {
     const dispatch = useAppDispatch();
     const params = useParams();
     const id = params.id as string;
-    const { web5, did, publicDid } = useAppSelector((state) => state.auth);
+    const { web5, did } = useAppSelector((state) => state.auth);
     const { items } = useAppSelector((state) => state.marketplace);
     const [message, setMessage] = useState('');
 

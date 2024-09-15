@@ -8,7 +8,7 @@ interface MarketPlaceItem {
     condition: 'new' | 'used';
     description: string;
     location: string;
-    photos: string[];
+    photos: any;
     sellerId: string;
 }
 
@@ -51,7 +51,7 @@ export const fetchListings = createAsyncThunk(
           return { ...data, id: record.id };
         })
       );
-
+      console.log("iteeeeeems", items);
       return items;
     } catch (error) {
       console.error('Error in fetchListings:', error);

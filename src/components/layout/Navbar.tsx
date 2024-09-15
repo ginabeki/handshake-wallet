@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
-import { constantPublicDid } from "@/data/constant";
+import { constantPublicDid as publicDid } from "@/data/constant";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
 import {
   fetchUserProfile,
@@ -34,7 +34,7 @@ const navigations = [
 const Navbar = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { status, error, isAuthenticated, did, web5, publicDid } = useAppSelector(
+  const { status, error, isAuthenticated, did, web5 } = useAppSelector(
     (state) => state.auth
   );
   const { data: profile, status: profileStatus } = useAppSelector((state) => state.userProfile);
@@ -121,11 +121,11 @@ const Navbar = () => {
       router.push("/dashboard");
       // console.log('Web5 instance:', web5);
     }
-  }, [status, isAuthenticated, did, publicDid, router, error]);
+  }, [status, isAuthenticated, did, router, error]);
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  console.log('constantPublicDid', constantPublicDid);
+  console.log('constantPublicDid', publicDid);
   return (
     <header className="w-full mx-auto drop-shadow-md">
       <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] px-5 py-6 md:px-10">

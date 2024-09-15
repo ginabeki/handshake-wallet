@@ -4,9 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppSelector } from '@/lib/state/hooks';
 import useImageUploader from '@/lib/imageUploader';
 import { handshakeProtocol } from '@/data/handshakeProtocolDefinition';
+import { constantPublicDid as publicDid } from '@/data/constant';
 
 const CreateListingForm = () => {
-    const { web5, did, publicDid } = useAppSelector((state) => state.auth);
+    const { web5, did } = useAppSelector((state) => state.auth);
     const { picture: photos, handleImageChange } = useImageUploader();
     const [loading, setLoading] = useState(false);
 
@@ -17,6 +18,7 @@ const CreateListingForm = () => {
         condition: 'new' as 'new' | 'used',
         description: '',
         location: '',
+        photos,
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -69,6 +71,7 @@ const CreateListingForm = () => {
                     condition: 'new',
                     description: '',
                     location: '',
+                    photos: null,
                 });
             }
         } catch (error) {
@@ -175,7 +178,7 @@ const CreateListingForm = () => {
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full text-white bg-teal hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-green-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             >
                 {loading ? 'Creating...' : 'Create Listing'}
             </button>
