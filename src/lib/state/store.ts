@@ -3,6 +3,7 @@ import web5Reducer from "./web5Slice";
 import userProfileReducer from "./userProfileSlice";
 import pfisReducer from "./pfisSlice";
 import vcReducer from "./vcSlice";
+import createListingReducer from "./marketplaceSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     userProfile: userProfileReducer,
     pfis: pfisReducer,
     kcc: vcReducer,
+    marketplace: createListingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

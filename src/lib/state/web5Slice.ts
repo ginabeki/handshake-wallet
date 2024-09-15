@@ -1,11 +1,12 @@
 import { handshakeInstallProtocol } from "@/data/handshakeProtocolDefinition";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { constantPublicDid as publicDid } from "@/data/constant";
 
 interface Web5StateInitialStateProps {
-  did: null;
+  did: string | null;
   isAuthenticated: boolean;
   status: string;
-  error: null;
+  error: string | null;
   loading: boolean;
   web5: any[] | null;
   customerDid: any;
@@ -20,6 +21,15 @@ const initialState: Web5StateInitialStateProps = {
   web5: null,
   customerDid: null,
 };
+
+if (publicDid) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("publicDid", publicDid);
+  }
+} else {
+  console.error("publicDid is undefined");
+}
+console.log("constantPublicDid", publicDid);
 
 export const initializeWeb5 = createAsyncThunk<
   { web5: any; did: string },
@@ -64,22 +74,20 @@ const web5Slice = createSlice({
         state.loading = true;
       })
       .addCase(initializeWeb5.fulfilled, (state, action: any) => {
-        const Did = action.payload.did;
-        const Web5 = action.payload.web5;
-        const customerDid = action.payload.customerDid;
-
-        state.web5 = Web5;
+        const { web5, did, customerDid } = action.payload;
+        state.web5 = web5;
         state.status = "succeeded";
-        state.did = Did;
+        state.did = did;
         state.customerDid = customerDid;
         state.isAuthenticated = true;
         state.error = null;
         state.loading = false;
-        if (Web5 && Did) {
-          handshakeInstallProtocol(Web5, Did);
+        console.log("Web5 initialized successfully:", web5.connectedDid);
+        if (web5 && did) {
+          handshakeInstallProtocol(web5, web5.connectedDid);
         }
       })
-      .addCase(initializeWeb5.rejected, (state, action: any) => {
+      .addCase(initializeWeb5.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Unknown error occurred";
         state.loading = false;

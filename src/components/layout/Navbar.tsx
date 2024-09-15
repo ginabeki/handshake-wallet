@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
+import { constantPublicDid as publicDid } from "@/data/constant";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
 import {
   fetchUserProfile,
@@ -115,6 +116,7 @@ const Navbar = () => {
 
   useEffect(() => {
     // console.log('Auth state changed:', { status, isAuthenticated, did, error });
+    console.log('Auth state changed:', { status, isAuthenticated, did, publicDid, error });
     if (isAuthenticated && did) {
       router.push("/dashboard");
       // console.log('Web5 instance:', web5);
@@ -123,6 +125,7 @@ const Navbar = () => {
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  console.log('constantPublicDid', publicDid);
   return (
     <header className="w-full mx-auto drop-shadow-md">
       <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] px-5 py-6 md:px-10">
