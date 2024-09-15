@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { json } from "stream/consumers";
 
 interface Pfis {
   offerings: any;
   loading: boolean;
   error: any;
   status: string;
-  selectedCredential: any;
+  selectedCredentials: any;
   selectedPfi: any;
+  rfq: any;
 }
 
 const initialState: Pfis = {
@@ -14,8 +16,9 @@ const initialState: Pfis = {
   loading: false,
   error: null,
   status: "idle",
-  selectedCredential: null,
+  selectedCredentials: null,
   selectedPfi: null,
+  rfq: null,
 };
 
 export const getOfferings = createAsyncThunk(
@@ -51,33 +54,40 @@ const pfisSlice = createSlice({
   name: "pfis",
   initialState,
   reducers: {
-    setSelectedCredential: (state, action) => {
-      state.selectedCredential = action.payload;
+    setSelectedCredentials: (state, action) => {
+      state.selectedCredentials = action.payload;
     },
 
     setSelectedPfi: (state, action) => {
       state.selectedPfi = action.payload;
     },
+
+    setRfq: (state, action) => {
+      state.rfq = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
-    builder.addCase(getOfferings.pending, (state) => {
-      state.loading = true;
-      state.status = "loading";
-    });
-    builder.addCase(getOfferings.fulfilled, (state, action) => {
-      state.loading = false;
-      state.status = "success";
-      state.offerings = action.payload;
-    });
-    builder.addCase(getOfferings.rejected, (state, action) => {
-      state.loading = false;
-      state.status = "failed";
-      state.error = action.error.message;
-    });
+    // Add the getOfferings reducer
+    builder
+      .addCase(getOfferings.pending, (state) => {
+        state.loading = true;
+        state.status = "loading";
+      })
+      .addCase(getOfferings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.status = "success";
+        state.offerings = action.payload;
+      })
+      .addCase(getOfferings.rejected, (state, action) => {
+        state.loading = false;
+        state.status = "failed";
+        state.error = action.error.message;
+      });
   },
 });
 
-export const { setSelectedCredential, setSelectedPfi } = pfisSlice.actions;
+export const { setSelectedCredentials, setSelectedPfi, setRfq } =
+  pfisSlice.actions;
 
 export default pfisSlice.reducer;

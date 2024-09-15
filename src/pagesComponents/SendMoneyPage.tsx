@@ -4,20 +4,21 @@ import { pfisList, currenciesList, rates } from "@/data";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import {
   getOfferings,
+  setRfq,
   setSelectedCredentials,
   setSelectedPfi,
 } from "@/lib/state/pfisSlice";
 import { getVcJwt } from "@/lib/state/vcSlice";
 import React, { useEffect, useState } from "react";
 import { PresentationExchange } from "@web5/credentials";
-import { Rfq } from "@tbdex/http-client";
+import { Rfq, TbdexHttpClient } from "@tbdex/http-client";
 
 const SendMoneyPage = () => {
   const [step, setStep] = useState<number>(1);
   const dispatch = useAppDispatch();
-  const { did } = useAppSelector((state: any) => state.auth);
+  const { did, customerDid } = useAppSelector((state: any) => state.auth);
   const { name } = useAppSelector((state: any) => state.userProfile);
-  const { offerings, loading, selectedPfi, selectedCredentials } =
+  const { offerings, loading, selectedPfi, selectedCredentials, rfq } =
     useAppSelector((state: any) => state.pfis);
   const { jwt, loading: verifyingUser } = useAppSelector(
     (state: any) => state.kcc
@@ -27,6 +28,13 @@ const SendMoneyPage = () => {
     payin: currenciesList[0].code,
     payout: currenciesList[1].code,
   });
+
+  const [account, setAccount] = useState({
+    payin: "1234567890",
+    routing: "123456789",
+    payout: "3245231234",
+  });
+
   const [rate, setRate] = useState(1);
   const fee = 1.99; // hardcoded fee
 
@@ -122,6 +130,14 @@ const SendMoneyPage = () => {
     });
   };
 
+  // Hanlder for account change
+  const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAccount({
+      ...account,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   // Filter out offerings that match the selected currencies
   const filteredOfferings = Array.isArray(offerings)
     ? offerings
@@ -171,33 +187,70 @@ const SendMoneyPage = () => {
     dispatch(setSelectedCredentials(selectedCredentials));
   };
 
+  function formatAccountNumber(accountNumber: string) {
+    // Convert account number to string and use regex to insert space every 4 digits
+    return accountNumber.toString().replace(/(\d{4})(?=\d)/g, "$1 ");
+  }
+
   // Request a quote
-  const requestQuote = () => {
+  const requestQuote = async () => {
     const rfq = Rfq.create({
       metadata: {
-        to: selectedPfi.pfiDid,
+        to: selectedPfi.offerings[0]?.metadata.from,
         from: did,
         protocol: "1.0",
       },
       data: {
         offeringId: selectedPfi.offerings[0]?.metadata?.id,
         payin: {
-          kind: selectedPfi.offerings[0]?.data?.payin?.methods[0].kind, // The method of payment
-          amount: amount.payin, // The amount of the payin currency
+          kind: selectedPfi.offerings[0]?.data?.payin?.methods[0].kind,
+          amount: amount.payin.toString(),
           paymentDetails: {
-            accountNumber: "1234567890",
-            routingNumber: "123456789",
+            accountNumber: account.payin.replace(/\s+/g, "").toString(),
+            routingNumber: account.routing.replace(/\s+/g, "").toString(),
           },
         },
         payout: {
-          kind: selectedPfi.offerings[0]?.data?.payout?.methods[0].kind, // The method for receiving payout
+          kind: selectedPfi.offerings[0]?.data?.payout?.methods[0].kind,
           paymentDetails: {
-            accountNumber: "3245231234", // Details required to execute payment
+            accountNumber: account.payout.replace(/\s+/g, "").toString(),
           },
         },
-        claims: selectedCredentials, // Array of signed VCs required by the PFI
+        claims: selectedCredentials,
       },
     });
+
+    try {
+      await rfq.verifyOfferingRequirements(selectedPfi.offerings[0]);
+    } catch (error) {
+      console.log("Error Verifying requirement", error);
+      return;
+    }
+
+    try {
+      await rfq.sign(customerDid);
+    } catch (error) {
+      console.log("Error signing RFQ", error);
+      return;
+    }
+
+    try {
+      await TbdexHttpClient.createExchange(rfq);
+    } catch (error) {
+      console.log("Error creating exchange", error);
+      return;
+    }
+
+    dispatch(setRfq(rfq));
+    console.log("success");
+    console.log(rfq);
+  };
+
+  console.log(selectedPfi?.offerings[0]);
+
+  // Create the exchange
+  const processQuote = async () => {
+    // dispatch(proccessQuote({ rfq, customerDid: did, selectedOffering: selectedPfi.offerings[0] }));
   };
 
   return (
@@ -211,6 +264,7 @@ const SendMoneyPage = () => {
           </div>
           <div className="text-black bg-white p-5 lg:col-span-2 rounded-xl">
             <form className="w-full">
+              {/* Step 1 */}
               {step === 1 && (
                 <div className="w-full space-y-4">
                   {/* You send money */}
@@ -399,7 +453,7 @@ const SendMoneyPage = () => {
                                                       index: number
                                                     ) => (
                                                       <div
-                                                        key={index}
+                                                        key={`${index}+1`}
                                                         className="text-primary-green font-medium"
                                                       >
                                                         {method.kind}
@@ -519,6 +573,7 @@ const SendMoneyPage = () => {
                 </div>
               )}
 
+              {/* Step 2 */}
               {step === 2 && (
                 <div className="w-full space-y-5">
                   <div className="text-[18px] font-semibold">Request Quote</div>
@@ -526,6 +581,60 @@ const SendMoneyPage = () => {
                     Now that you&apos;ve found an offering that meets your
                     needs, you can request a quote to receive a formal offer.
                   </p>
+
+                  <div className="flex flex-col items-start justify-between space-y-1 border-2 border-black p-2 rounded-lg overflow-hidden">
+                    <label className="font-semibold" htmlFor="amount">
+                      Sending Account Number
+                    </label>
+                    <input
+                      type=""
+                      id="payin"
+                      name="payin"
+                      className="text-md font-medium w-full outline-none border-none text-primary-green"
+                      placeholder={`${formatAccountNumber("0000000000000000")}`}
+                      value={`${formatAccountNumber(account.payin)}`}
+                      min={0}
+                      maxLength={12}
+                      onChange={handleAccountChange}
+                    />
+                  </div>
+
+                  <div className="flex flex-col items-start justify-between space-y-1 border-2 border-black p-2 rounded-lg overflow-hidden">
+                    <label className="font-semibold" htmlFor="amount">
+                      Reception Account Number
+                    </label>
+                    <input
+                      type=""
+                      id="payout"
+                      name="payout"
+                      className="text-md font-medium w-full outline-none border-none text-primary-green"
+                      placeholder={`${formatAccountNumber("0000000000000000")}`}
+                      value={`${formatAccountNumber(account.payout)}`}
+                      min={0}
+                      maxLength={12}
+                      onChange={handleAccountChange}
+                    />
+                  </div>
+
+                  {!rfq && account.payin && account.payout && (
+                    <button
+                      className="w-full border block bg-primary-green text-white py-2 px-5 rounded-lg"
+                      type="button"
+                      onClick={() => requestQuote()}
+                    >
+                      Request Quote
+                    </button>
+                  )}
+
+                  {rfq && account.payin && account.payout && (
+                    <button
+                      className="w-full border block bg-primary-green text-white py-2 px-5 rounded-lg"
+                      type="button"
+                      onClick={() => processQuote()}
+                    >
+                      {loading ? " ..." : "Place Order"}
+                    </button>
+                  )}
                   <div
                     className={`w-auto flex flex-row items-center ${
                       step > 1 ? "justify-between" : "justify-end"
