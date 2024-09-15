@@ -1,8 +1,10 @@
-import { MarkeplacePage } from "@/pagesComponents";
-import React from "react";
+import dynamic from 'next/dynamic'
 
-const page = () => {
+const MarkeplacePage = dynamic(
+  () => import('@/pagesComponents/MarkeplacePage'),
+  { ssr: false }
+)
+
+export default function Page() {
   return <MarkeplacePage />;
-};
-
-export default page;
+}
