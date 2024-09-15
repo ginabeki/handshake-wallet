@@ -1,8 +1,8 @@
 import { SendMoneyPage } from "@/pagesComponents";
 import React from "react";
 
-const Page = () => {
+const page = () => {
   return <SendMoneyPage />;
 };
 
-export default Page;
+export default page;
