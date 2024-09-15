@@ -10,15 +10,15 @@ const ItemDetails: React.FC = () => {
     const dispatch = useAppDispatch();
     const params = useParams();
     const id = params.id as string;
-    const { web5, did } = useAppSelector((state) => state.auth);
+    const { web5, did, publicDid } = useAppSelector((state) => state.auth);
     const { items } = useAppSelector((state) => state.marketplace);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        if (web5 && did && items.length === 0) {
-            dispatch(fetchListings({ web5, did }));
+        if (web5 && publicDid && items.length === 0) {
+            dispatch(fetchListings({ web5, publicDid }));
         }
-    }, [dispatch, web5, did, items.length]);
+    }, [dispatch, web5, publicDid, items.length]);
 
     const item = items.find(item => item.id === id);
 

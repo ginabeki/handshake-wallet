@@ -1,18 +1,22 @@
+"use client"
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/state/hooks';
-import { createListing } from '@/lib/state/marketplaceSlice';
+import { v4 as uuidv4 } from 'uuid';
+import { useAppSelector } from '@/lib/state/hooks';
+import useImageUploader from '@/lib/imageUploader';
+import { handshakeProtocol } from '@/data/handshakeProtocolDefinition';
 
-const CreateListingForm: React.FC = () => {
-    const dispatch = useAppDispatch();
-    const { web5, did } = useAppSelector((state) => state.auth);
-    const { status, error } = useAppSelector((state) => state.marketplace);
+const CreateListingForm = () => {
+    const { web5, did, publicDid } = useAppSelector((state) => state.auth);
+    const { picture: photos, handleImageChange } = useImageUploader();
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({
+        id: uuidv4(),
         title: '',
         price: 0,
         condition: 'new' as 'new' | 'used',
         description: '',
         location: '',
-        photos: [] as string[],
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -20,113 +24,161 @@ const CreateListingForm: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fileNames = Array.from(e.target.files || []).map(file => file.name);
-        setFormData(prev => ({ ...prev, photos: [...prev.photos, ...fileNames] }));
-    };
+    const createListing = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setLoading(true);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (web5 && did) {
-            try {
-                await dispatch(createListing({ web5, did, item: formData })).unwrap();
+        if (!formData.title || !formData.price || !formData.description || !formData.location || !photos) {
+            alert("Please fill in all the required fields!");
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const listingData = {
+                ...formData,
+                sellerId: did,
+                photos: photos,
+            };
+
+            const { record, status } = await web5.dwn.records.create({
+                data: listingData,
+                message: {
+                    protocol: handshakeProtocol.protocol,
+                    protocolPath: "marketplaceItem",
+                    schema: handshakeProtocol.types.marketplaceItem.schema,
+                    recipient: did,
+                    published: true,
+                },
+            });
+
+            const DIDs = [did, publicDid];
+            await Promise.all(
+                DIDs.map(async (did) => {
+                    await record.send(did);
+                })
+            );
+
+            if (status.code === 202 && status.detail === "Accepted") {
                 alert('Listing created successfully!');
-                // Reset form or navigate to another page
-            } catch (err) {
-                console.error('Failed to create listing:', err);
-                alert('Failed to create listing. Please try again.');
+                // Reset form
+                setFormData({
+                    id: uuidv4(),
+                    title: '',
+                    price: 0,
+                    condition: 'new',
+                    description: '',
+                    location: '',
+                });
             }
-        } else {
-            alert('Web5 or DID not initialized. Please ensure you are logged in.');
+        } catch (error) {
+            console.error("Error creating listing: ", error);
+            alert(`Failed to create listing: ${error instanceof Error ? error.message : String(error)}`);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const isLoading = status === 'loading';
-
-
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={createListing} className="space-y-4">
             <div>
-                <label htmlFor="title" className="block mb-2">Title</label>
+                <label htmlFor="title" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Title <span className="text-red-500">*</span>
+                </label>
                 <input
                     type="text"
                     id="title"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     required
-                    className="w-full p-2 border rounded"
                 />
             </div>
+
             <div>
-                <label htmlFor="price" className="block mb-2">Price</label>
+                <label htmlFor="price" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Price <span className="text-red-500">*</span>
+                </label>
                 <input
                     type="number"
                     id="price"
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     required
-                    className="w-full p-2 border rounded"
                 />
             </div>
+
             <div>
-                <label htmlFor="condition" className="block mb-2">Condition</label>
+                <label htmlFor="condition" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Condition <span className="text-red-500">*</span>
+                </label>
                 <select
                     id="condition"
                     name="condition"
                     value={formData.condition}
                     onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     required
-                    className="w-full p-2 border rounded"
                 >
                     <option value="new">New</option>
                     <option value="used">Used</option>
                 </select>
             </div>
+
             <div>
-                <label htmlFor="description" className="block mb-2">Description</label>
+                <label htmlFor="description" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Description <span className="text-red-500">*</span>
+                </label>
                 <textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     required
-                    className="w-full p-2 border rounded"
                 />
             </div>
+
             <div>
-                <label htmlFor="location" className="block mb-2">Location</label>
+                <label htmlFor="location" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Location <span className="text-red-500">*</span>
+                </label>
                 <input
                     type="text"
                     id="location"
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     required
-                    className="w-full p-2 border rounded"
                 />
             </div>
+
             <div>
-                <label htmlFor="photos" className="block mb-2">Photos</label>
+                <label htmlFor="photos" className="block mb-2 text-[16px] font-medium text-gray-900">
+                    Photos <span className="text-red-500">*</span>
+                </label>
                 <input
                     type="file"
                     id="photos"
                     name="photos"
-                    onChange={handlePhotoUpload}
+                    onChange={handleImageChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-3"
                     multiple
-                    accept="image/*"
-                    className="w-full p-2 border rounded"
+                    required
                 />
             </div>
+
             <button
                 type="submit"
-                className={`px-4 py-2 rounded ${isLoading ? 'bg-gray-400' : 'bg-blue-500'} text-white`}
-                disabled={isLoading}
+                disabled={loading}
+                className="w-full text-white bg-teal hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             >
-                {isLoading ? 'Creating...' : 'Publish Listing'}
+                {loading ? 'Creating...' : 'Create Listing'}
             </button>
-            {error && <div className="text-red-500">{error}</div>}
         </form>
     );
 };

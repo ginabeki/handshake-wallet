@@ -24,90 +24,60 @@ const initialState: MarketPlaceState = {
     error: null
 }
 
-export const createListing = createAsyncThunk(
-    'marketplace/createListing',
-    async (data: { web5: any; did: string; item: Omit<MarketPlaceItem, 'id' | 'sellerId'> }, { rejectWithValue }) => {
-      try {
-        const result = await data.web5.dwn.records.create({
-          data: { ...data.item, sellerId: data.did },
-          message: {
-            protocol: handshakeProtocol.protocol,
+export const fetchListings = createAsyncThunk(
+  'marketplace/fetchListings',
+  async (web5: any, { rejectWithValue }) => {
+    if (!web5 || !web5.dwn || !web5.dwn.records) {
+      return rejectWithValue("Web5 instance is not properly initialized");
+    }
+    
+    try {
+      const response = await web5.dwn.records.query({
+        message: {
+          filter: {
             protocolPath: "marketplaceItem",
             schema: handshakeProtocol.types.marketplaceItem.schema,
-            dataFormat: "application/json"
-          }
-        });
-  
-        console.log('Create record result:', result);
-  
-        if (!result.record) {
-          throw new Error('Failed to create record: ' + JSON.stringify(result));
-        }
-  
-        const createdItem = await result.record.data.json();
-        return { ...createdItem, id: result.record.id };
-      } catch (error) {
-        console.error('Error in createListing:', error);
-        return rejectWithValue(error instanceof Error ? error.message : "Failed to create listing");
-      }
-    }
-  );
-
-  export const fetchListings = createAsyncThunk(
-    'marketplace/fetchListings',
-    async (data: { web5: any; did: string }, { rejectWithValue }) => {
-      try {
-        const { records } = await data.web5.dwn.records.query({
-          message: {
-            filter: {
-              protocol: handshakeProtocol.protocol,
-              protocolPath: "marketplaceItem",
-              schema: handshakeProtocol.types.marketplaceItem.schema,
-            },
           },
-        });
-  
-        const items = await Promise.all(records.map(async (record: any) => {
-          const item = await record.data.json();
-          return { ...item, id: record.id };
-        }));
-  
-        return items;
-      } catch (error) {
-        return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch listings");
-      }
-    }
-  );
+        },
+      });
 
-  const marketplaceSlice = createSlice({
-    name: "marketplace",
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-      builder
-        .addCase(createListing.pending, (state) => {
-          state.status = 'loading';
+      if (response.status.code !== 200) {
+        throw new Error(`Failed to fetch listings: ${response.status.detail}`);
+      }
+
+      const items = await Promise.all(
+        response.records.map(async (record: any) => {
+          const data = await record.data.json();
+          return { ...data, id: record.id };
         })
-        .addCase(createListing.fulfilled, (state, action) => {
-            state.status = 'succeeded';
-            state.items.push(action.payload);
-          })
-          .addCase(createListing.rejected, (state, action) => {
-            state.status = 'failed';
-            state.error = action.payload as string;
-          })
-        .addCase(fetchListings.pending, (state) => {
-          state.status = 'loading';
-        })
-        .addCase(fetchListings.fulfilled, (state, action) => {
-          state.status = 'succeeded';
-          state.items = action.payload;
-        })
-        .addCase(fetchListings.rejected, (state, action) => {
-          state.status = 'failed';
-          state.error = action.payload as string;
-        });
-    },
-  });
+      );
+
+      return items;
+    } catch (error) {
+      console.error('Error in fetchListings:', error);
+      return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch listings");
+    }
+  }
+);
+
+const marketplaceSlice = createSlice({
+  name: "marketplace",
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchListings.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchListings.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(fetchListings.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+      });
+  },
+});
   
   export default marketplaceSlice.reducer;

@@ -5,15 +5,15 @@ import Link from 'next/link';
 
 const MarketplaceListings: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { web5, did } = useAppSelector((state) => state.auth);
+    const { web5, publicDid } = useAppSelector((state) => state.auth);
     const { items, status, error } = useAppSelector((state) => state.marketplace);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        if (web5 && did) {
-            dispatch(fetchListings({ web5, did }));
+        if (web5 && publicDid) {
+            dispatch(fetchListings({ web5, publicDid }));
         }
-    }, [dispatch, web5, did]);
+    }, [dispatch, web5, publicDid]);
 
     const filteredItems = items.filter(item =>
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

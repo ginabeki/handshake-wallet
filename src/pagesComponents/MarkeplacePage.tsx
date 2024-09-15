@@ -6,22 +6,60 @@ import { fetchListings } from '@/lib/state/marketplaceSlice';
 import { initializeWeb5 } from '@/lib/state/web5Slice';
 import Link from 'next/link';
 import CreateListingForm from '@/components/marketplace/CreateListingForm';
+import CustomImage from '@/components/CustomImage';
 
 const MarketplacePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { web5, did, isAuthenticated } = useAppSelector((state) => state.auth);
+  const authState = useAppSelector((state) => state.auth);
+  const { web5, did, isAuthenticated, publicDid } = useAppSelector((state) => state.auth);
   const { items, status, error } = useAppSelector((state) => state.marketplace);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   useEffect(() => {
-    if (web5 && did) {
-      dispatch(fetchListings({ web5, did }));
+    if (web5) {
+      dispatch(fetchListings(web5));
     }
-  }, [dispatch, web5, did]);
+  }, [web5, dispatch]);
 
   const handleAuth = () => {
     dispatch(initializeWeb5());
     setShowAuthPrompt(false);
+  };
+
+  const fetchImage = async (recordId: string) => {
+    if (web5) {
+      try {
+        const { record } = await web5.dwn.records.read({
+          message: {
+            filter: {
+              recordId: recordId
+            }
+          }
+        });
+
+        if (!record) {
+          console.error(`No record found for ID: ${recordId}`);
+          return null;
+        }
+
+        if (!record.data) {
+          console.error(`Record found, but data is undefined for ID: ${recordId}`);
+          return null;
+        }
+
+        const blob = await record.data.blob();
+        if (!blob) {
+          console.error(`Failed to get blob from record data for ID: ${recordId}`);
+          return null;
+        }
+
+        return URL.createObjectURL(blob);
+      } catch (error) {
+        console.error('Error fetching image:', error);
+        return null;
+      }
+    }
+    return null;
   };
 
   if (status === 'loading') return <div>Loading...</div>;
@@ -60,6 +98,15 @@ const MarketplacePage: React.FC = () => {
         {items.map((item) => (
           <Link href={`/marketplace/${item.id}`} key={item.id}>
             <div className="border rounded p-4 hover:shadow-lg transition-shadow">
+              {item.photos && item.photos.length > 0 && (
+                <CustomImage
+                  width={300}
+                  height={250}
+                  src={fetchImage(item.photos[0])}
+                  alt={item.title}
+                  className="w-full h-48 object-cover mb-2"
+                />
+              )}
               <h3 className="font-bold">{item.title}</h3>
               <p>${item.price}</p>
               <p>{item.condition}</p>

@@ -25,18 +25,18 @@ export const handshakeProtocol = {
     },
     marketplace: {
       $actions: [{ who: "anyone", can: ["create", "read"] }],
-      marketplaceItem: {
-        $actions: [
-          { who: "anyone", can: ["read"] },
-          { who: "author", of: "marketplaceItem", can: ["create", "update", "delete"] },
-        ],
-      },
-      marketplaceMessage: {
-        $actions: [
-          { who: "author", of: "marketplaceItem", can: ["read"] },
-          { who: "recipient", of: "marketplaceMessage", can: ["create", "read"] },
-        ],
-      },
+    },
+    marketplaceItem: {
+      $actions: [
+        { who: "anyone", can: ["read"] },
+        { who: "author", of: "marketplaceItem", can: ["create", "update", "delete"] },
+      ],
+    },
+    marketplaceMessage: {
+      $actions: [
+        { who: "author", of: "marketplaceItem", can: ["read"] },
+        { who: "recipient", of: "marketplaceMessage", can: ["create", "read"] },
+      ],
     },
   },
 };
