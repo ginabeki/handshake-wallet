@@ -5,6 +5,8 @@ interface Pfis {
   loading: boolean;
   error: any;
   status: string;
+  selectedCredential: any;
+  selectedPfi: any;
 }
 
 const initialState: Pfis = {
@@ -12,6 +14,8 @@ const initialState: Pfis = {
   loading: false,
   error: null,
   status: "idle",
+  selectedCredential: null,
+  selectedPfi: null,
 };
 
 export const getOfferings = createAsyncThunk(
@@ -46,7 +50,16 @@ export const getOfferings = createAsyncThunk(
 const pfisSlice = createSlice({
   name: "pfis",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedCredential: (state, action) => {
+      state.selectedCredential = action.payload;
+    },
+
+    setSelectedPfi: (state, action) => {
+      state.selectedPfi = action.payload;
+    },
+  },
+
   extraReducers: (builder) => {
     builder.addCase(getOfferings.pending, (state) => {
       state.loading = true;
@@ -64,5 +77,7 @@ const pfisSlice = createSlice({
     });
   },
 });
+
+export const { setSelectedCredential, setSelectedPfi } = pfisSlice.actions;
 
 export default pfisSlice.reducer;

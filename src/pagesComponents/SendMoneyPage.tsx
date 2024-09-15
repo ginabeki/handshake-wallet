@@ -2,21 +2,31 @@
 
 import { pfisList, currenciesList, rates } from "@/data";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
-import { getOfferings } from "@/lib/state/pfisSlice";
+import {
+  getOfferings,
+  setSelectedCredentials,
+  setSelectedPfi,
+} from "@/lib/state/pfisSlice";
 import { getVcJwt } from "@/lib/state/vcSlice";
 import React, { useEffect, useState } from "react";
 import { PresentationExchange } from "@web5/credentials";
+import { Rfq } from "@tbdex/http-client";
 
 const SendMoneyPage = () => {
   const [step, setStep] = useState<number>(1);
   const dispatch = useAppDispatch();
-  const { offerings, loading } = useAppSelector((state: any) => state.pfis);
+  const { did } = useAppSelector((state: any) => state.auth);
+  const { name } = useAppSelector((state: any) => state.userProfile);
+  const { offerings, loading, selectedPfi, selectedCredentials } =
+    useAppSelector((state: any) => state.pfis);
+  const { jwt, loading: verifyingUser } = useAppSelector(
+    (state: any) => state.kcc
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [currencyCodes, setCurrencyCodes] = useState({
     payin: currenciesList[0].code,
     payout: currenciesList[1].code,
   });
-
   const [rate, setRate] = useState(1);
   const fee = 1.99; // hardcoded fee
 
@@ -81,7 +91,8 @@ const SendMoneyPage = () => {
   }, [amount.payout, isTyping.payout, rate]);
 
   // Handler to toggle the offerings dropdown
-  const handleGetOffers = () => {
+  const handleGetOffers = (pfi: any) => {
+    dispatch(setSelectedPfi(pfi));
     setIsOpen(!isOpen);
   };
 
@@ -126,6 +137,69 @@ const SendMoneyPage = () => {
         .filter((pfi: any) => pfi.offerings.length > 0)
     : [];
 
+  // verify user
+  const verifyUser = async () => {
+    if (!did) {
+      alert("Please login to verify your identity");
+      return;
+    }
+
+    if (!name) {
+      alert("Please create your profile to verify your identity");
+      return;
+    }
+
+    dispatch(
+      getVcJwt({
+        customerName: name,
+        countryCode: "US",
+        customerDID: did,
+      })
+    );
+  };
+
+  // set selected credential
+  const credential = () => {
+    if (!selectedPfi) {
+      alert("Please select a PFI to proceed");
+      return;
+    }
+    const selectedCredentials = PresentationExchange.selectCredentials({
+      vcJwts: jwt,
+      presentationDefinition: selectedPfi.offerings[0]?.data?.requiredClaims,
+    });
+    dispatch(setSelectedCredentials(selectedCredentials));
+  };
+
+  // Request a quote
+  const requestQuote = () => {
+    const rfq = Rfq.create({
+      metadata: {
+        to: selectedPfi.pfiDid,
+        from: did,
+        protocol: "1.0",
+      },
+      data: {
+        offeringId: selectedPfi.offerings[0]?.metadata?.id,
+        payin: {
+          kind: selectedPfi.offerings[0]?.data?.payin?.methods[0].kind, // The method of payment
+          amount: amount.payin, // The amount of the payin currency
+          paymentDetails: {
+            accountNumber: "1234567890",
+            routingNumber: "123456789",
+          },
+        },
+        payout: {
+          kind: selectedPfi.offerings[0]?.data?.payout?.methods[0].kind, // The method for receiving payout
+          paymentDetails: {
+            accountNumber: "3245231234", // Details required to execute payment
+          },
+        },
+        claims: selectedCredentials, // Array of signed VCs required by the PFI
+      },
+    });
+  };
+
   return (
     <main className="w-full mx-auto bg-primary-yellow">
       <section className="w-full">
@@ -168,9 +242,10 @@ const SendMoneyPage = () => {
                     </div>
                   </div>
 
-                  {/* Conversio Rate */}
-                  <div>
-                    <p className="text-md font-semibold text-black/70">
+                  {/* Conversion Market Rate */}
+                  <div className="inline-flex items-start justify-center space-x-2 text-[14px]">
+                    <p className=" text-primary-green">Market Rate</p>
+                    <p className="font-semibold text-black">
                       1 {currencyCodes.payin} = {rate} {currencyCodes.payout}
                     </p>
                   </div>
@@ -227,102 +302,230 @@ const SendMoneyPage = () => {
                     </p>
                   </div>
 
-                  {/* Offerings */}
-                  <div className="relative w-full flex flex-col items-center justify-between">
-                    {loading ? (
-                      <button
-                        type="button"
-                        className="w-full text-[14px] font-semibold text-black/70 text-center bg-primary-gray/70 border py-3 px-5 border-black rounded-lg"
-                        disabled
-                      >
-                        Loading Offers
-                      </button>
-                    ) : filteredOfferings.length === 0 ? (
-                      <button
-                        type="button"
-                        className="w-full text-[14px] font-medium text-black/70 text-center bg-red-100 border py-3 px-5 border-black rounded-lg"
-                        disabled
-                      >
-                        <span>
-                          No Offer Available for{" "}
-                          <span className="text-red-500 font-bold">
-                            {currencyCodes.payin}
-                          </span>{" "}
-                          to{" "}
-                          <span className="text-red-500 font-bold">
-                            {currencyCodes.payout}
-                          </span>
-                        </span>
-                      </button>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          className="w-full text-[14px] font-semibold text-black/70 text-center bg-primary-gray border py-3 px-5 border-black rounded-lg"
-                          onClick={() => setIsOpen(!isOpen)}
-                        >
-                          View {filteredOfferings.length} Offer
-                          {filteredOfferings.length > 1 && "s"}
-                        </button>
-                        {isOpen && (
-                          <div
-                            onClick={handleGetOffers}
-                            className="absolute w-full flex flex-col items-center justify-center space-y-2 bg-primary-gray inset-x-0 translate-y-[50px] p-3 rounded-lg text-[12px]"
-                          >
-                            {filteredOfferings.map(
-                              (pfi: any, index: number) => (
-                                <div
-                                  key={index}
-                                  className="bg-white w-full rounded-md p-2"
-                                >
-                                  <span className="w-full text-[14px]">
-                                    {pfi.pfiName}
+                  {did ? (
+                    name ? (
+                      jwt ? (
+                        <>
+                          {/* Offerings */}
+                          <div className="relative w-full flex flex-col items-center justify-between">
+                            {loading ? (
+                              <button
+                                type="button"
+                                className="w-full text-[14px] font-semibold text-black/70 text-center bg-primary-gray/70 border py-3 px-5 border-black rounded-lg"
+                                disabled
+                              >
+                                Loading Offers
+                              </button>
+                            ) : filteredOfferings.length === 0 ? (
+                              <button
+                                type="button"
+                                className="w-full text-[14px] font-medium text-black/70 text-center bg-red-100 border py-3 px-5 border-black rounded-lg"
+                                disabled
+                              >
+                                <span>
+                                  No Offer Available for{" "}
+                                  <span className="text-red-500 font-bold">
+                                    {currencyCodes.payin}
+                                  </span>{" "}
+                                  to{" "}
+                                  <span className="text-red-500 font-bold">
+                                    {currencyCodes.payout}
                                   </span>
-                                  {pfi.offerings.map(
-                                    (offering: any, index: number) => (
-                                      <button key={index}>
-                                        {offering.data.description}
-                                      </button>
-                                    )
-                                  )}
-                                </div>
-                              )
+                                </span>
+                              </button>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  className="w-full text-[14px] font-semibold text-black/70 text-center bg-primary-gray border py-3 px-5 border-black rounded-lg"
+                                  onClick={() => setIsOpen(!isOpen)}
+                                >
+                                  View {filteredOfferings.length} Offer
+                                  {filteredOfferings.length > 1 && "s"}
+                                </button>
+                                {isOpen && (
+                                  <div className="absolute w-full flex flex-col items-center justify-center space-y-4 bg-yellow-200 inset-x-0 translate-y-[50px] p-3 rounded-lg text-[12px]">
+                                    {filteredOfferings.map(
+                                      (pfi: any, index: number) => (
+                                        <div
+                                          key={index}
+                                          className="bg-blue-200 w-full rounded-md p-4 space-y-3"
+                                        >
+                                          <span className="w-full text-[14px] font-bold capitalize">
+                                            {pfi.pfiName}
+                                          </span>
+                                          {pfi.offerings.map(
+                                            (offering: any, index: number) => (
+                                              <div className="relative p-2 bg-green-50 rounded-md w-full flex flex-col items-start justify-start space-y-2">
+                                                <div className="w-full inline-flex items-center justify-between">
+                                                  <div className="inline-flex items-center justify-start">
+                                                    <span className="font-semibold text-[14px]">
+                                                      {
+                                                        offering.data.payin
+                                                          .currencyCode
+                                                      }{" "}
+                                                      to{" "}
+                                                      {
+                                                        offering.data.payout
+                                                          .currencyCode
+                                                      }
+                                                    </span>
+                                                  </div>
+                                                  <div>
+                                                    <span>
+                                                      1{" "}
+                                                      {
+                                                        offering.data.payin
+                                                          .currencyCode
+                                                      }{" "}
+                                                      ={" "}
+                                                    </span>
+                                                    <span className="font-semibold">
+                                                      {
+                                                        offering.data
+                                                          .payoutUnitsPerPayinUnit
+                                                      }{" "}
+                                                      {
+                                                        offering.data.payout
+                                                          .currencyCode
+                                                      }
+                                                    </span>
+                                                  </div>
+                                                </div>
+                                                <div className="inline-flex items-center justify-between space-x-2">
+                                                  {offering.data?.payin?.methods?.map(
+                                                    (
+                                                      method: any,
+                                                      index: number
+                                                    ) => (
+                                                      <div
+                                                        key={index}
+                                                        className="text-primary-green font-medium"
+                                                      >
+                                                        {method.kind}
+                                                      </div>
+                                                    )
+                                                  )}
+                                                  <span>to</span>
+                                                  {offering.data?.payout?.methods?.map(
+                                                    (method: any) => (
+                                                      <div className="text-primary-green font-medium">
+                                                        {method.kind}
+                                                      </div>
+                                                    )
+                                                  )}
+                                                </div>
+                                                <div>
+                                                  {offering.data?.payout?.methods?.map(
+                                                    (method: any) => (
+                                                      <div>
+                                                        <span className="text-black">
+                                                          Speed :
+                                                        </span>{" "}
+                                                        <span className="text-primary-green font-medium">
+                                                          {(
+                                                            method.estimatedSettlementTime /
+                                                            1000 /
+                                                            60
+                                                          ).toFixed(2)}
+                                                        </span>
+                                                        <span className="text-black">
+                                                          {" "}
+                                                          minutes
+                                                        </span>
+                                                      </div>
+                                                    )
+                                                  )}
+                                                </div>
+                                                <div className="w-full flex flex-col items-center justify-center space-y-3">
+                                                  <div className="w-full text-center">
+                                                    {offering.data.description}?
+                                                  </div>
+                                                  <button
+                                                    type="button"
+                                                    className="w-full text-center bg-primary-green text-white py-1.5 px-4"
+                                                    onClick={() =>
+                                                      handleGetOffers(pfi)
+                                                    }
+                                                  >
+                                                    Select Offer
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
-                        )}
-                      </>
-                    )}
-                  </div>
 
-                  {/* Next button */}
-                  <div
-                    className={`w-auto flex flex-row items-center ${
-                      step > 1 ? "justify-between" : "justify-end"
-                    }`}
-                  >
-                    {step > 1 && (
-                      <button
-                        className="border block bg-primary-green text-white py-2 px-5 rounded-lg"
-                        type="button"
-                        onClick={() => setStep(step - 1)}
-                      >
-                        Back
-                      </button>
-                    )}
-                    <button
-                      className="border block bg-primary-green text-white py-2 px-5 rounded-lg"
-                      type="button"
-                      onClick={() => setStep(step + 1)}
-                    >
-                      Next
-                    </button>
-                  </div>
+                          {/* Next button */}
+                          {filteredOfferings.length > 0 && (
+                            <div
+                              className={`w-auto flex flex-row items-center ${
+                                step > 1 ? "justify-between" : "justify-end"
+                              }`}
+                            >
+                              {step > 1 && (
+                                <button
+                                  className="border block bg-primary-green text-white py-2 px-5 rounded-lg"
+                                  type="button"
+                                  onClick={() => setStep(step - 1)}
+                                >
+                                  Back
+                                </button>
+                              )}
+
+                              {selectedPfi && (
+                                <button
+                                  className="border block bg-primary-green text-white py-2 px-5 rounded-lg"
+                                  type="button"
+                                  onClick={() => {
+                                    credential();
+                                    setStep(step + 1);
+                                  }}
+                                >
+                                  Next
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className="w-full text-[14px] font-semibold text-white text-center bg-primary-green border py-3 px-5 border-black rounded-md"
+                          onClick={() => verifyUser()}
+                        >
+                          {verifyingUser
+                            ? "Verifying ..."
+                            : "Verify your account"}
+                        </button>
+                      )
+                    ) : (
+                      <div className="w-full text-[14px] font-semibold text-black/70 text-center bg-red-100 border py-3 px-5 border-black rounded-md">
+                        Create your profile to continue
+                      </div>
+                    )
+                  ) : (
+                    <div className="w-full text-[14px] font-semibold text-black/70 text-center bg-red-100 border py-3 px-5 border-black rounded-md">
+                      Login to continue
+                    </div>
+                  )}
                 </div>
               )}
 
               {step === 2 && (
-                <div>
-                  <span>step 2</span>
+                <div className="w-full space-y-5">
+                  <div className="text-[18px] font-semibold">Request Quote</div>
+                  <p className="text-black/70 text-[14px]">
+                    Now that you&apos;ve found an offering that meets your
+                    needs, you can request a quote to receive a formal offer.
+                  </p>
                   <div
                     className={`w-auto flex flex-row items-center ${
                       step > 1 ? "justify-between" : "justify-end"
