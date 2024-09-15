@@ -36,7 +36,7 @@ const Hero = () => {
             Send money instantly and shop locally using our platform
           </p>
           <div className="w-full inline-flex items-center justify-center lg:justify-start space-x-4">
-            <Link href={"/send-money"}>
+            <Link href={"/sendMoney"}>
               <Button>Send money</Button>
             </Link>
             <Link href={"/marketplace"}>

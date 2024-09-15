@@ -23,7 +23,7 @@ const navigations = [
   { name: "about", href: "/about", customClass: "" },
   {
     name: "send money",
-    href: "/send-money",
+    href: "/sendMoney",
     customClass: "block lg:hidden xl:block",
   },
   { name: "marketplace", href: "/marketplace", customClass: "" },
