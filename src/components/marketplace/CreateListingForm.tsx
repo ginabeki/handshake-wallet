@@ -1,15 +1,19 @@
 "use client"
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useAppSelector } from '@/lib/state/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/state/hooks';
 import useImageUploader from '@/lib/imageUploader';
 import { handshakeProtocol } from '@/data/handshakeProtocolDefinition';
 import { constantPublicDid as publicDid } from '@/data/constant';
+import { addListing, fetchListings, MarketPlaceItem } from '@/lib/state/marketplaceSlice';
 
 const CreateListingForm = () => {
+    const dispatch = useAppDispatch();
     const { web5, did } = useAppSelector((state) => state.auth);
     const { picture: photos, handleImageChange } = useImageUploader();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         id: uuidv4(),
@@ -29,6 +33,9 @@ const CreateListingForm = () => {
     const createListing = async (event: React.FormEvent, web5: any) => {
         event.preventDefault();
         setLoading(true);
+        setLoading(true);
+        setError(null);
+        setSuccess(null);
 
         if (!formData.title || !formData.price || !formData.description || !formData.location || !photos) {
             alert("Please fill in all the required fields!");
@@ -37,9 +44,9 @@ const CreateListingForm = () => {
         }
 
         try {
-            const listingData = {
+            const listingData: MarketPlaceItem = {
                 ...formData,
-                sellerId: did,
+                sellerId: did || '',
                 photos: photos,
             };
 
@@ -54,15 +61,17 @@ const CreateListingForm = () => {
                 },
             });
 
-            const DIDs = [did, publicDid];
-            await Promise.all(
-                DIDs.map(async (did) => {
-                    await record.send(did);
-                })
-            );
 
             if (status.code === 202 && status.detail === "Accepted") {
+                dispatch(addListing(listingData));
+                setSuccess('Listing created successfully! It may take a few moments to appear.');
                 alert('Listing created successfully!');
+                const DIDs = [did, publicDid].filter((d): d is string => typeof d === 'string');
+                DIDs.forEach(targetDid => {
+                    record.send(targetDid).catch((error: any) => {
+                        console.warn(`Failed to send record to DID: ${targetDid}. This is non-critical and the listing has been created.`, error);
+                    });
+                });
                 // Reset form
                 setFormData({
                     id: uuidv4(),
@@ -73,10 +82,17 @@ const CreateListingForm = () => {
                     location: '',
                     photos: null,
                 });
+                // Refresh listings after a short delay
+                setTimeout(() => {
+                    dispatch(fetchListings(web5));
+                }, 5000); // Wait for 5 seconds before refreshing
+            } else {
+                throw new Error(`Unexpected status: ${status.code} ${status.detail}`);
             }
         } catch (error) {
             console.error("Error creating listing: ", error);
-            alert(`Failed to create listing: ${error instanceof Error ? error.message : String(error)}`);
+            setError(`Failed to create listing. Please try again. Error: ${error instanceof Error ? error.message : String(error)}`);
+            // alert(`Failed to create listing: ${error instanceof Error ? error.message : String(error)}`);
         } finally {
             setLoading(false);
         }
@@ -174,7 +190,8 @@ const CreateListingForm = () => {
                     required
                 />
             </div>
-
+            {error && <div className="text-red-500">{error}</div>}
+            {success && <div className="text-green-500">{success}</div>}
             <button
                 type="submit"
                 disabled={loading}

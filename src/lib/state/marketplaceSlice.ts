@@ -1,7 +1,7 @@
 import { handshakeProtocol } from './../../data/handshakeProtocolDefinition';
-import { createSlice, createAsyncThunk  } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, PayloadAction  } from "@reduxjs/toolkit"
 
-interface MarketPlaceItem {
+export interface MarketPlaceItem {
     id: string;
     title: string;
     price: number;
@@ -63,7 +63,11 @@ export const fetchListings = createAsyncThunk(
 const marketplaceSlice = createSlice({
   name: "marketplace",
   initialState,
-  reducers: {},
+  reducers: {
+    addListing: (state, action: PayloadAction<MarketPlaceItem>) => {
+      state.items.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchListings.pending, (state) => {
@@ -80,4 +84,5 @@ const marketplaceSlice = createSlice({
   },
 });
   
-  export default marketplaceSlice.reducer;
+export const { addListing } = marketplaceSlice.actions;
+export default marketplaceSlice.reducer;
