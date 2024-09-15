@@ -92,7 +92,6 @@ const CreateListingForm = () => {
         } catch (error) {
             console.error("Error creating listing: ", error);
             setError(`Failed to create listing. Please try again. Error: ${error instanceof Error ? error.message : String(error)}`);
-            // alert(`Failed to create listing: ${error instanceof Error ? error.message : String(error)}`);
         } finally {
             setLoading(false);
         }
