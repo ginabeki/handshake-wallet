@@ -67,6 +67,11 @@ const marketplaceSlice = createSlice({
     addListing: (state, action: PayloadAction<MarketPlaceItem>) => {
       state.items.push(action.payload);
     },
+    clearListings: (state) => {
+      state.items = [];
+      state.status = 'idle';
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -84,5 +89,5 @@ const marketplaceSlice = createSlice({
   },
 });
   
-export const { addListing } = marketplaceSlice.actions;
+export const { addListing,clearListings } = marketplaceSlice.actions;
 export default marketplaceSlice.reducer;
