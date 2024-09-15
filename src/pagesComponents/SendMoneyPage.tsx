@@ -2,6 +2,7 @@
 
 import { pfisList, currenciesList, rates } from "@/data";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
+import { useCallback } from "react";
 import {
   getOfferings,
   setRfq,
@@ -123,12 +124,12 @@ const SendMoneyPage = () => {
   };
 
   // Handler for currency change
-  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCurrencyCodes({
-      ...currencyCodes,
+  const handleCurrencyChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrencyCodes(prev => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
-  };
+    }));
+  }, []);
 
   // Hanlder for account change
   const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -278,7 +279,7 @@ const SendMoneyPage = () => {
                         className="text-3xl font-bold w-auto outline-none border-none"
                         value={amount.payin}
                         min={0}
-                        onChange={handlePayinChange}
+                        onChange={(e) => handlePayinChange(e)}
                       />
                     </div>
                     <div className="absolute h-full inset-y-0 right-0 flex flex-col items-center justify-center p-2 bg-secondar-yellow">
@@ -315,7 +316,7 @@ const SendMoneyPage = () => {
                         className="text-3xl font-bold w-auto outline-none border-none"
                         value={amount.payout}
                         min={0}
-                        onChange={handlePayoutChange}
+                        onChange={(e) => handlePayoutChange(e)}
                       />
                     </div>
                     <div className="absolute h-full inset-y-0 right-0 flex flex-col items-center justify-center p-2 bg-secondar-yellow">
@@ -594,7 +595,7 @@ const SendMoneyPage = () => {
                       value={`${formatAccountNumber(account.payin)}`}
                       min={0}
                       maxLength={12}
-                      onChange={handleAccountChange}
+                      onChange={(e) => handleAccountChange(e)}
                     />
                   </div>
 
@@ -611,7 +612,7 @@ const SendMoneyPage = () => {
                       value={`${formatAccountNumber(account.payout)}`}
                       min={0}
                       maxLength={12}
-                      onChange={handleAccountChange}
+                      onChange={(e) => handleAccountChange(e)}
                     />
                   </div>
 
