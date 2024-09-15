@@ -1,33 +1,20 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/state/hooks';
-import { fetchListings } from '@/lib/state/marketplaceSlice';
 import { initializeWeb5 } from '@/lib/state/web5Slice';
-import Link from 'next/link';
 import CreateListingForm from '@/components/marketplace/CreateListingForm';
-import CustomImage from '@/components/CustomImage';
+import MarketplaceListings from '@/components/marketplace/MarketplaceListings';
 
 const MarketplacePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { web5, isAuthenticated } = useAppSelector((state) => state.auth);
-  const { items, status, error } = useAppSelector((state) => state.marketplace);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
-
-  useEffect(() => {
-    if (web5) {
-      dispatch(fetchListings(web5));
-    }
-  }, [web5, dispatch]);
 
   const handleAuth = () => {
     dispatch(initializeWeb5());
     setShowAuthPrompt(false);
   };
-
-
-  if (status === 'loading') return <div>Loading...</div>;
-  if (status === 'failed') return <div>Error: {error}</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -58,27 +45,7 @@ const MarketplacePage: React.FC = () => {
       )}
 
       <h2 className="text-2xl font-bold mb-4">Current Listings</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => (
-          <Link href={`/marketplace/${item.id}`} key={item.id}>
-            <div className="border rounded p-4 hover:shadow-lg transition-shadow">
-              {item.photos && item.photos.length > 0 && (
-                <CustomImage
-                  width={1000}
-                  height={1000}
-                  src={item.photos}
-                  alt={item.title}
-                  className="w-full h-48 object-cover mb-2"
-                />
-              )}
-              <h3 className="font-bold">{item.title}</h3>
-              <p>${item.price}</p>
-              <p>{item.condition}</p>
-              <p>{item.location}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <MarketplaceListings />
     </div>
   );
 };
