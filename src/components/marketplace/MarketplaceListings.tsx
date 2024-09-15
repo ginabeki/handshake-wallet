@@ -2,18 +2,32 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/lib/state/hooks';
 import { fetchListings } from '@/lib/state/marketplaceSlice';
 import Link from 'next/link';
+import { Web5 } from '@web5/api';
 
 const MarketplaceListings: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { web5 } = useAppSelector((state) => state.auth);
     const { items, status, error } = useAppSelector((state) => state.marketplace);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        if (web5) {
-            dispatch(fetchListings({ web5 }));
-        }
-    }, [dispatch, web5]);
+        const fetchListingsData = async () => {
+            try {
+                const { web5 } = await Web5.connect();
+                dispatch(fetchListings(web5));
+            } catch (error) {
+                console.error('Error connecting to Web5:', error);
+            }
+        };
+
+        fetchListingsData();
+
+        // Interval to refresh listings periodically, every 30s
+        const intervalId = setInterval(fetchListingsData, 30000);
+
+        // Clean up the interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [dispatch]);
+
 
     const filteredItems = items.filter(item =>
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,6 +46,9 @@ const MarketplaceListings: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full p-2 border rounded mb-4"
             />
+            {status === 'succeeded' && filteredItems.length === 0 && (
+                <div>No listings available at the moment.</div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredItems.map((item) => (
                     <Link href={`/marketplace/${item.id}`} key={item.id}>
