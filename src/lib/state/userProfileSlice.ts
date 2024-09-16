@@ -232,7 +232,9 @@ const userProfileSlice = createSlice({
         state.error = action.error.message;
         state.data = null;
         // console.log("Failed to fetch user profile data", action.error);
-      })
+      });
+
+    builder
       .addCase(createUserProfile.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -249,7 +251,9 @@ const userProfileSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
         state.data = null;
-      })
+      });
+
+    builder
       .addCase(updateUserProfile.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -265,7 +269,9 @@ const userProfileSlice = createSlice({
       .addCase(updateUserProfile.rejected, (state, action: any) => {
         state.status = "failed";
         state.error = action.payload;
-      })
+      });
+
+    builder
       .addCase(deleteUserProfile.pending, (state) => {
         state.status = "loading";
         state.error = null;

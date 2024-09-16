@@ -4,6 +4,7 @@ import FeaturesPage from "./FeaturesPage";
 import ContactPage from "./ContactPage";
 import HomePage from "./HomePage";
 import { SendMoneyPage } from "@/components/Sendmoney/SendMoneyPage";
+import Dashboard from "@/app/dashboard/page";
 
 export {
   AboutPage,
@@ -12,4 +13,5 @@ export {
   FeaturesPage,
   ContactPage,
   HomePage,
+  Dashboard,
 };

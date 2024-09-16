@@ -172,37 +172,8 @@ const Navbar = () => {
             ) : (
               <>
                 <Button onClick={handleLogout}>Logout</Button>
-                {!profile ? (
-                  <Button onClick={handleCreateProfile}>Create Profile</Button>
-                ) : (
-                  <>
-                    <Button onClick={handleFetchUserProfile}>
-                      Fetch Profile
-                    </Button>
-                    <Button
-                      onClick={handleUpdateProfile}
-                      disabled={profileStatus === "loading"}
-                    >
-                      {profileStatus === "loading"
-                        ? "Updating..."
-                        : "Update Profile"}
-                    </Button>
-                    <Button
-                      onClick={handleDeleteProfile}
-                      disabled={profileStatus === "loading"}
-                    >
-                      Delete Profile
-                    </Button>
-                  </>
-                )}
               </>
             )}
-            {did && (
-              <p>
-                DID: {did.slice(0, 5)} ... {did.slice(-5)}
-              </p>
-            )}
-            {error && <p>Error: {error}</p>}
           </div>
           <button
             type="button"
