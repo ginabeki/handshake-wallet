@@ -33,7 +33,7 @@ const Hero = () => {
             Borderless transactions & Secure Purchases
           </h1>
           <p className="w-full text-primary-gray text-[15px] md:text-[17px] lg:text-[19px] text-center md:text-left">
-            Send money instantly and shop locally using our platform
+            Send money instantly, shop locally & globally using our platform
           </p>
           <div className="w-full inline-flex items-center justify-center lg:justify-start space-x-4">
             <Link href={"/sendMoney"}>
