@@ -48,22 +48,6 @@ Welcome to HandShake Wallet – where we're not just predicting the future of gl
    - Multi-factor authentication
    - End-to-end encryption for all communications
 
-5. **Smart Transaction Management**
-
-   - Configurable transaction timers
-   - Automated fund release based on delivery confirmation
-   - Fair dispute resolution system
-
-6. **Integrated Delivery Tracking**
-
-   - Dedicated pick-up stores for reliable item handover
-   - Real-time tracking for buyers and sellers
-   - Confirmation process to ensure buyer satisfaction
-
-7. **Trust and Reputation System**
-   - Bilateral review system for buyers and sellers
-   - Transparent user ratings
-
 ## How It Works: A Journey of Borderless Commerce
 
 HandShake Wallet revolutionizes the way people interact with money and commerce across borders. Imagine a world where geographical boundaries no longer limit your financial freedom or shopping experiences. This is the world HandShake Wallet is creating.
@@ -193,6 +177,9 @@ HandShake Wallet implements a multi-faceted approach to profitability:
 - Implementation of a loyalty program to reward frequent users
 - Enhanced AI-driven fraud detection and prevention systems
 - Analytics dashboard for monitoring and improving customer satisfaction metrics.
+- Automated fund release based on delivery confirmation
+- Integrated Delivery Tracking
+- Bilateral review system for buyers and sellers and Transparent user ratings
 
 ## Contributing
 
