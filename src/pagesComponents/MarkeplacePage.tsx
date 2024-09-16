@@ -1,7 +1,5 @@
-import React from "react";
-
+import MarketplacePageClient from "@/components/marketplace/MarketplacePageClient";
 const MarkeplacePage = () => {
-  return <main className="w-full mx-auto">Marketplace page</main>;
-};
-
+  return <MarketplacePageClient />
+}
 export default MarkeplacePage;

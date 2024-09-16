@@ -1,29 +1,135 @@
 "use client";
 
+import React, { useState, useCallback, useEffect } from "react";
 import { images } from "@/data";
 import Link from "next/link";
-import React, { useState } from "react";
 import CustomImage from "../CustomImage";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
+import { Button } from "../ui/button";
+import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
+import {
+  fetchUserProfile,
+  createUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
+} from "@/lib/state/userProfileSlice";
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
-  { name: "about", href: "/about", customClass: "" },
+  // { name: "about", href: "/about", customClass: "" },
   {
     name: "send money",
-    href: "/send-money",
+    href: "/sendMoney",
     customClass: "block lg:hidden xl:block",
   },
   { name: "marketplace", href: "/marketplace", customClass: "" },
-  { name: "features", href: "/features", customClass: "" },
-  { name: "contact", href: "/contact", customClass: "" },
+  // { name: "contact", href: "/contact", customClass: "" },
 ];
 
 const Navbar = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { status, error, isAuthenticated, did, web5 } = useAppSelector(
+    (state) => state.auth
+  );
+  const { data: profile, status: profileStatus } = useAppSelector(
+    (state) => state.userProfile
+  );
+
+  // fetch user profile
+  const handleFetchUserProfile = useCallback(() => {
+    // console.log("Fetch profile button clicked");
+    // console.log("web5:", web5);
+    // console.log("did:", did);
+    if (web5 && did) {
+      // console.log("Dispatching fetchUserProfile");
+      dispatch(fetchUserProfile({ web5, did }));
+    } else {
+      // console.log("web5 or did is undefined");
+    }
+  }, [dispatch, web5, did]);
+
+  // create user profile
+  const handleCreateProfile = useCallback(() => {
+    if (web5 && did) {
+      const newProfile = {
+        name: "John Doe",
+        bio: "A software engineer",
+        location: "Nairobi, kENYA",
+      };
+      dispatch(createUserProfile({ web5, did, profile: newProfile }));
+    } else {
+      // console.log("web5 or did is undefined");
+    }
+  }, [dispatch, web5, did]);
+
+  // Update user profile
+  const handleUpdateProfile = useCallback(async () => {
+    if (web5 && did && profile) {
+      const updatedProfile = {
+        name: profile.name,
+        bio: "Updated bio for John Doe",
+        location: profile.location,
+      };
+      // console.log("Dispatching updateUserProfile with:", { web5, did, profile: updatedProfile });
+      try {
+        const result = await dispatch(
+          updateUserProfile({ web5, did, profile: updatedProfile })
+        ).unwrap();
+        // console.log("Profile updated successfully:", result);
+        // Optionally, you can fetch the updated profile here
+        dispatch(fetchUserProfile({ web5, did }));
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+        // Handle the error (e.g., show an error message to the user)
+      }
+    } else {
+      // console.log("Cannot update profile:", { web5, did, profile });
+    }
+  }, [dispatch, web5, did, profile]);
+
+  // Delete user profile
+  const handleDeleteProfile = useCallback(async () => {
+    if (web5 && did) {
+      try {
+        const result = await dispatch(
+          deleteUserProfile({ web5, did })
+        ).unwrap();
+        // console.log("Profile deleted successfully:", result);
+        // Optionally, you can redirect the user or show a success message
+      } catch (error) {
+        console.error("Failed to delete profile:", error);
+        // Handle the error (e.g., show an error message to the user)
+      }
+    } else {
+      // console.log("Cannot delete profile:", { web5, did });
+    }
+  }, [dispatch, web5, did]);
+
+  const handleSignUp = useCallback(() => {
+    dispatch(initializeWeb5());
+  }, [dispatch]);
+
+  const handleLogout = useCallback(() => {
+    dispatch(logoutWeb5());
+    router.push("/");
+  }, [dispatch, router]);
+
+  useEffect(() => {
+    // // console.log('Auth state changed:', { status, isAuthenticated, did, error });
+    // console.log('Auth state changed:', { status, isAuthenticated, did, publicDid, error });
+    if (isAuthenticated && did) {
+      router.push("/dashboard");
+      // // console.log('Web5 instance:', web5);
+    }
+  }, [status, isAuthenticated, did, router, error]);
+
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  // console.log('constantPublicDid', publicDid);
   return (
     <header className="w-full mx-auto drop-shadow-md">
       <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] px-5 py-6 md:px-10">
@@ -36,6 +142,7 @@ const Navbar = () => {
             className="w-full h-full object-center object-cover"
           />
         </Link>
+
         <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
           {navigations.map((nav, index) => (
             <Link
@@ -53,19 +160,32 @@ const Navbar = () => {
               <span>{nav.name}</span>
             </Link>
           ))}
-        </nav>
-        <div className="inline-flex items-center justify-end space-x-10">
-          <div className="text-[14px] hidden md:block">
+          {web5 && did && (
             <Link
-              href={"/send-money"}
-              className={`px-6 py-2 capitalize rounded-full text-center flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear  ${
-                String(pathname) === "/send-money"
-                  ? "bg-primary-yellow text-black"
-                  : "bg-black hover:bg-primary-yellow/70 hover:text-black text-white"
+              href={"/dashboard"}
+              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear
+              ${
+                String(pathname) === "/dashboard"
+                  ? "bg-primary-yellow"
+                  : "bg-transparent hover:bg-primary-yellow/70"
               }`}
             >
-              <span>Send money</span>
+              <span>Dashboard</span>
             </Link>
+          )}
+        </nav>
+
+        <div className="inline-flex items-center justify-end space-x-10">
+          <div className="text-[14px] hidden md:block">
+            {!isAuthenticated ? (
+              <Button onClick={handleSignUp} disabled={status === "loading"}>
+                {status === "loading" ? "Connecting..." : "Connect"}
+              </Button>
+            ) : (
+              <>
+                <Button onClick={handleLogout}>Logout</Button>
+              </>
+            )}
           </div>
           <button
             type="button"
@@ -115,6 +235,20 @@ const Navbar = () => {
                   <span>{nav.name}</span>
                 </Link>
               ))}
+              {web5 && did && (
+                <Link
+                  href={"/dashboard"}
+                  className={`capitalize relative w-full border-black p-3 inline-flex 
+                    items-center justify-start space-x-5 rounded-lg
+              ${
+                String(pathname) === "/dashboard"
+                  ? "bg-primary-yellow"
+                  : "bg-white hover:bg-primary-yellow/70 text-black"
+              }`}
+                >
+                  <span>Dashboard</span>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
