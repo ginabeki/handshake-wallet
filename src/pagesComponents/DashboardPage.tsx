@@ -113,18 +113,14 @@ const DashboardPage = () => {
     <main className="w-full mx-auto">
       <div className="section-container grid grid-cols-2 items-start justify-between gap-5">
         <div>
-          {!profile ? (
-            <Button onClick={handleCreateProfile}>Create Profile</Button>
-          ) : (
+          {profile && (
             <>
               <div>
-                {profile && (
+                <div>
                   <div>
-                    <div>
-                      <span>name : </span> <span>{name}</span>
-                    </div>
+                    <span>name : </span> <span>{name}</span>
                   </div>
-                )}
+                </div>
               </div>
               <Button
                 onClick={handleDeleteProfile}
@@ -187,10 +183,7 @@ const DashboardPage = () => {
             </div>
 
             {profile ? (
-              <Button
-                type="button"
-                onClick={() => handleUpdateProfile(formData)}
-              >
+              <Button type="button" onClick={handleUpdateProfile}>
                 {profileStatus === "loading"
                   ? "Updating ..."
                   : "Update Profile"}
