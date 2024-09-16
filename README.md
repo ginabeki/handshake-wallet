@@ -1,5 +1,9 @@
 # HandShake Wallet: Revolutionizing Global Commerce and Finance
 
+| Desktop                                                                                                   | Mobile                                                                                                      |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ![Macbook-Air-localhost](https://github.com/user-attachments/assets/e883d770-6ed2-4b69-be04-0268d20f0c2e) | ![iPhone-13-PRO-localhost](https://github.com/user-attachments/assets/fba2903e-1326-482b-a1c6-5620992314f3) |
+
 ## Overview
 
 Imagine a world where borders dissolve in the face of commerce, where a artisan in Kenya can sell to a collector in New York as easily as to a neighbor, and where sending money to family abroad is as simple as texting. This is not a distant future – it's the reality HandShake Wallet is creating today.
@@ -21,31 +25,37 @@ Welcome to HandShake Wallet – where we're not just predicting the future of gl
 ### Key Features
 
 1. **Decentralized Money Transfer**
+
    - Seamless cross-border transactions
    - Integration with multiple PFIs through tbDEX
    - Support for various currencies and conversion
 
 2. **Decentralized Marketplace**
+
    - Create and browse listings for new and used items
    - Secure transaction mediation system
    - User verification using Verifiable Credentials
 
 3. **Trusted Transaction Flow**
+
    - Secure payment holding mechanism
    - Funds released upon confirmed delivery
    - Built-in communication channel between buyers and sellers
 
 4. **User-Centric Security**
+
    - Decentralized Identifiers (DIDs) for user authentication
    - Multi-factor authentication
    - End-to-end encryption for all communications
 
 5. **Smart Transaction Management**
+
    - Configurable transaction timers
    - Automated fund release based on delivery confirmation
    - Fair dispute resolution system
 
 6. **Integrated Delivery Tracking**
+
    - Dedicated pick-up stores for reliable item handover
    - Real-time tracking for buyers and sellers
    - Confirmation process to ensure buyer satisfaction
@@ -62,31 +72,32 @@ HandShake Wallet revolutionizes the way people interact with money and commerce 
 
 Meet Sarah, a talented artisan from Kenya who crafts unique, handmade jewelry. Previously limited to her local market, Sarah's world changes when she discovers HandShake Wallet.
 
-1. **Global Marketplace Access**: 
+1. **Global Marketplace Access**:
    Sarah easily creates listings for her jewelry on HandShake Wallet, showcasing her creations to a worldwide audience.
 
-2. **Borderless Customer Reach**: 
+2. **Borderless Customer Reach**:
    John, an art enthusiast in the United States, stumbles upon Sarah's exquisite necklace while browsing HandShake Wallet's global marketplace.
 
-3. **Seamless Communication**: 
+3. **Seamless Communication**:
    Intrigued, John initiates a chat with Sarah directly through the platform, discussing the necklace's details and customization options.
 
-4. **Frictionless Payment**: 
+4. **Frictionless Payment**:
    Once they agree on the purchase, John uses HandShake Wallet to send payment in USD. Behind the scenes, tbDEX protocol springs into action:
+
    - The platform instantly connects with multiple liquidity providers.
    - It finds the best exchange rate for converting USD to Kes (Kenyan Shilling).
    - The conversion is executed swiftly and securely.
 
-5. **Secure Transaction Holding**: 
+5. **Secure Transaction Holding**:
    HandShake Wallet securely holds the converted funds, assuring Sarah of the payment and John of his purchase protection.
 
-6. **Efficient Delivery**: 
+6. **Efficient Delivery**:
    Sarah drops off the necklace at a local HandShake Wallet pickup point, initiating the tracked delivery process to John in the US.
 
-7. **Confirmation and Release**: 
+7. **Confirmation and Release**:
    Upon receiving the necklace, John confirms his satisfaction through the app. HandShake Wallet immediately releases the held funds to Sarah's wallet in GHS.
 
-8. **Beyond the Sale**: 
+8. **Beyond the Sale**:
    With earnings in her HandShake Wallet, Sarah now has options:
    - Reinvest in her business by purchasing supplies from international vendors.
    - Transfer money to her family in Kenya, again utilizing tbDEX for optimal GHS to KES conversion.
@@ -121,16 +132,19 @@ HandShake Wallet doesn't just solve the problem of slow and painful cross-border
 ### Installation
 
 1. Clone the repository:
+
    ```
    git clone git@github.com:ginabeki/handshake-wallet.git
    ```
 
 2. Navigate to the project directory:
+
    ```
    cd handshake-wallet
    ```
 
 3. Install dependencies:
+
    ```
    npm install
    ```
@@ -139,6 +153,7 @@ HandShake Wallet doesn't just solve the problem of slow and painful cross-border
    Create a `.env.local` file in the root directory and add the necessary environment variables (refer to `.env.example`).
 
 5. Run the development server:
+
    ```
    npm run dev
    ```

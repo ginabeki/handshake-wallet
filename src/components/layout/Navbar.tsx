@@ -1,15 +1,14 @@
 "use client";
 
+import React, { useState, useCallback, useEffect } from "react";
 import { images } from "@/data";
 import Link from "next/link";
-import React, { useState, useCallback, useEffect } from "react";
 import CustomImage from "../CustomImage";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/state/hooks";
 import { Button } from "../ui/button";
-import { constantPublicDid as publicDid } from "@/data/constant";
 import { initializeWeb5, logoutWeb5 } from "@/lib/state/web5Slice";
 import {
   fetchUserProfile,
@@ -37,7 +36,9 @@ const Navbar = () => {
   const { status, error, isAuthenticated, did, web5 } = useAppSelector(
     (state) => state.auth
   );
-  const { data: profile, status: profileStatus } = useAppSelector((state) => state.userProfile);
+  const { data: profile, status: profileStatus } = useAppSelector(
+    (state) => state.userProfile
+  );
 
   // fetch user profile
   const handleFetchUserProfile = useCallback(() => {
@@ -72,11 +73,13 @@ const Navbar = () => {
       const updatedProfile = {
         name: profile.name,
         bio: "Updated bio for John Doe",
-        location: profile.location
+        location: profile.location,
       };
       // console.log("Dispatching updateUserProfile with:", { web5, did, profile: updatedProfile });
       try {
-        const result = await dispatch(updateUserProfile({ web5, did, profile: updatedProfile })).unwrap();
+        const result = await dispatch(
+          updateUserProfile({ web5, did, profile: updatedProfile })
+        ).unwrap();
         // console.log("Profile updated successfully:", result);
         // Optionally, you can fetch the updated profile here
         dispatch(fetchUserProfile({ web5, did }));
@@ -93,7 +96,9 @@ const Navbar = () => {
   const handleDeleteProfile = useCallback(async () => {
     if (web5 && did) {
       try {
-        const result = await dispatch(deleteUserProfile({ web5, did })).unwrap();
+        const result = await dispatch(
+          deleteUserProfile({ web5, did })
+        ).unwrap();
         // console.log("Profile deleted successfully:", result);
         // Optionally, you can redirect the user or show a success message
       } catch (error) {
@@ -144,12 +149,14 @@ const Navbar = () => {
               <Link
                 key={index}
                 href={nav.href}
-                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${nav.customClass
-                  } 
-              ${String(pathname) === nav.href
-                    ? "bg-primary-yellow"
-                    : "bg-transparent hover:bg-primary-yellow/70"
-                  }`}
+                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
+                  nav.customClass
+                } 
+              ${
+                String(pathname) === nav.href
+                  ? "bg-primary-yellow"
+                  : "bg-transparent hover:bg-primary-yellow/70"
+              }`}
               >
                 <span>{nav.name}</span>
               </Link>
@@ -169,11 +176,21 @@ const Navbar = () => {
                   <Button onClick={handleCreateProfile}>Create Profile</Button>
                 ) : (
                   <>
-                    <Button onClick={handleFetchUserProfile}>Fetch Profile</Button>
-                    <Button onClick={handleUpdateProfile} disabled={profileStatus === 'loading'}>
-                      {profileStatus === 'loading' ? 'Updating...' : 'Update Profile'}
+                    <Button onClick={handleFetchUserProfile}>
+                      Fetch Profile
                     </Button>
-                    <Button onClick={handleDeleteProfile} disabled={profileStatus === 'loading'}>
+                    <Button
+                      onClick={handleUpdateProfile}
+                      disabled={profileStatus === "loading"}
+                    >
+                      {profileStatus === "loading"
+                        ? "Updating..."
+                        : "Update Profile"}
+                    </Button>
+                    <Button
+                      onClick={handleDeleteProfile}
+                      disabled={profileStatus === "loading"}
+                    >
                       Delete Profile
                     </Button>
                   </>
@@ -186,7 +203,6 @@ const Navbar = () => {
               </p>
             )}
             {error && <p>Error: {error}</p>}
-            <p>Status: {status}</p>
           </div>
           <button
             type="button"
@@ -224,12 +240,14 @@ const Navbar = () => {
                   key={nav.name}
                   href={nav.href}
                   className={`capitalize relative w-full border-black p-3 inline-flex 
-                    items-center justify-start space-x-5 rounded-lg ${nav.customClass
+                    items-center justify-start space-x-5 rounded-lg ${
+                      nav.customClass
                     }
-                   ${String(pathname) === nav.href
-                      ? "bg-primary-yellow"
-                      : "bg-white hover:bg-primary-yellow/70 text-black"
-                    }`}
+                   ${
+                     String(pathname) === nav.href
+                       ? "bg-primary-yellow"
+                       : "bg-white hover:bg-primary-yellow/70 text-black"
+                   }`}
                 >
                   <span>{nav.name}</span>
                 </Link>
