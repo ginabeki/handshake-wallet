@@ -19,15 +19,14 @@ import {
 
 const navigations = [
   { name: "Home", href: "/", customClass: "block lg:hidden" },
-  { name: "about", href: "/about", customClass: "" },
+  // { name: "about", href: "/about", customClass: "" },
   {
     name: "send money",
     href: "/sendMoney",
     customClass: "block lg:hidden xl:block",
   },
   { name: "marketplace", href: "/marketplace", customClass: "" },
-  { name: "features", href: "/features", customClass: "" },
-  { name: "contact", href: "/contact", customClass: "" },
+  // { name: "contact", href: "/contact", customClass: "" },
 ];
 
 const Navbar = () => {
@@ -143,26 +142,39 @@ const Navbar = () => {
             className="w-full h-full object-center object-cover"
           />
         </Link>
-        {pathname !== "/dashboard" && (
-          <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
-            {navigations.map((nav, index) => (
-              <Link
-                key={index}
-                href={nav.href}
-                className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
-                  nav.customClass
-                } 
+
+        <nav className="hidden lg:inline-flex items-center justify-center space-x-3 text-[14px]">
+          {navigations.map((nav, index) => (
+            <Link
+              key={index}
+              href={nav.href}
+              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear ${
+                nav.customClass
+              } 
               ${
                 String(pathname) === nav.href
                   ? "bg-primary-yellow"
                   : "bg-transparent hover:bg-primary-yellow/70"
               }`}
-              >
-                <span>{nav.name}</span>
-              </Link>
-            ))}
-          </nav>
-        )}
+            >
+              <span>{nav.name}</span>
+            </Link>
+          ))}
+          {web5 && did && (
+            <Link
+              href={"/dashboard"}
+              className={`px-6 py-1.5 capitalize rounded-full text-center text-black flex flex-row items-center justify-center font-medium transition-all duration-200 ease-linear
+              ${
+                String(pathname) === "/dashboard"
+                  ? "bg-primary-yellow"
+                  : "bg-transparent hover:bg-primary-yellow/70"
+              }`}
+            >
+              <span>Dashboard</span>
+            </Link>
+          )}
+        </nav>
+
         <div className="inline-flex items-center justify-end space-x-10">
           <div className="text-[14px] hidden md:block">
             {!isAuthenticated ? (
@@ -223,6 +235,20 @@ const Navbar = () => {
                   <span>{nav.name}</span>
                 </Link>
               ))}
+              {web5 && did && (
+                <Link
+                  href={"/dashboard"}
+                  className={`capitalize relative w-full border-black p-3 inline-flex 
+                    items-center justify-start space-x-5 rounded-lg
+              ${
+                String(pathname) === "/dashboard"
+                  ? "bg-primary-yellow"
+                  : "bg-white hover:bg-primary-yellow/70 text-black"
+              }`}
+                >
+                  <span>Dashboard</span>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

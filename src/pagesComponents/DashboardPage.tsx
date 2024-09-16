@@ -6,6 +6,7 @@ import {
   createUserProfile,
   deleteUserProfile,
   fetchUserProfile,
+  setUserProfile,
   updateUserProfile,
 } from "@/lib/state/userProfileSlice";
 import React, { useCallback, useEffect, useState } from "react";
@@ -49,6 +50,7 @@ const DashboardPage = () => {
 
         const newProfile = formData;
         dispatch(createUserProfile({ web5, did, profile: newProfile }));
+        dispatch(setUserProfile(newProfile));
         alert("Profile created successfully");
       } else {
         alert("web5 or did is undefined");

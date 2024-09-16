@@ -18,7 +18,7 @@ const SendMoneyContent = () => {
   const [step, setStep] = useState<number>(1);
   const dispatch = useAppDispatch();
   const { did, customerDid } = useAppSelector((state: any) => state.auth);
-  const { name } = useAppSelector((state: any) => state.userProfile);
+  const { name, profile } = useAppSelector((state: any) => state.userProfile);
   const { offerings, loading, selectedPfi, selectedCredentials, rfq, order } =
     useAppSelector((state: any) => state.pfis);
   const { jwt, loading: verifyingUser } = useAppSelector(
@@ -729,7 +729,7 @@ const SendMoneyContent = () => {
 
           <div
             className={`w-auto flex flex-row items-center ${
-              step > 1 ? "justify-between" : "justify-end"
+              step > 1 ? "justify-between" : "justify-start"
             }`}
           >
             {step > 1 && (
@@ -741,13 +741,13 @@ const SendMoneyContent = () => {
                 Back
               </button>
             )}
-            <button
+            {/* <button
               className="border block bg-primary-green text-white py-2 px-5 rounded-lg"
               type="button"
               onClick={() => setStep(step + 1)}
             >
               Next
-            </button>
+            </button> */}
           </div>
         </div>
       )}

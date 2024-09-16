@@ -213,25 +213,26 @@ export const deleteUserProfile = createAsyncThunk(
 const userProfileSlice = createSlice({
   name: "userProfile",
   initialState,
-  reducers: {},
+  reducers: {
+    setUserProfile: (state, action) => {
+      state.name = action.payload.name;
+      state.bio = action.payload.bio;
+      state.location = action.payload.location;
+      console.log("action.payload", action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserProfile.pending, (state: any) => {
-        state.name = "";
-        state.bio = "";
-        state.location = "";
+        state.status = "loading";
+        state.error = null;
       })
       .addCase(fetchUserProfile.fulfilled, (state, action: any) => {
-        state.name = action.payload.name;
         state.data = action.payload;
-        // console.log("action.payload", action.payload);
-        state.bio = action.payload.bio;
-        state.location = action.payload.location;
       })
       .addCase(fetchUserProfile.rejected, (state, action: any) => {
         state.error = action.error.message;
         state.data = null;
-        // console.log("Failed to fetch user profile data", action.error);
       });
 
     builder
@@ -241,9 +242,6 @@ const userProfileSlice = createSlice({
       })
       .addCase(createUserProfile.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.name = action.payload.name;
-        state.bio = action.payload.bio;
-        state.location = action.payload.location;
         state.data = action.payload;
         state.error = null;
       })
@@ -260,9 +258,6 @@ const userProfileSlice = createSlice({
       })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.name = action.payload.name;
-        state.bio = action.payload.bio;
-        state.location = action.payload.location;
         state.data = action.payload;
         state.error = null;
       })
@@ -290,5 +285,7 @@ const userProfileSlice = createSlice({
       });
   },
 });
+
+export const { setUserProfile } = userProfileSlice.actions;
 
 export default userProfileSlice.reducer;
