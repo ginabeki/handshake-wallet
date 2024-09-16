@@ -36,35 +36,25 @@ const HowItWorks = () => {
 
   const questions = [
     {
-      question:
-        "What services and transactions can be performed through internet banking?",
-      answer:
-        "What services and transactions can be performed through internet banking?",
+      question: "What is HandShake Wallet and how does it differ from traditional banking?",
+      answer: "HandShake Wallet is a decentralized digital wallet that combines cross-border money transfers with a marketplace feature. Unlike traditional banking, it uses Web5 technology to give you full control over your digital identity and transactions, offering faster and potentially cheaper international transfers."
     },
     {
-      question:
-        "What services and transactions can be performed through internet banking?",
-      answer:
-        "What services and transactions can be performed through internet banking?",
+      question: "How secure are my transactions and personal information on HandShake Wallet?",
+      answer: "HandShake Wallet prioritizes security by using decentralized identifiers (DIDs) and verifiable credentials. Your personal information is encrypted and stored in your own Decentralized Web Node (DWN), not on centralized servers. This approach significantly enhances the security and privacy of your data and transactions."
     },
     {
-      question:
-        "What services and transactions can be performed through internet banking?",
-      answer:
-        "What services and transactions can be performed through internet banking?",
+      question: "Can I use HandShake Wallet for international money transfers, and how does it work?",
+      answer: "Yes, HandShake Wallet specializes in international money transfers. It uses the tbDEX protocol to connect you with the best available liquidity providers for your specific transfer needs. This means you can send money across borders quickly and at competitive rates, with full transparency on fees and exchange rates."
     },
     {
-      question:
-        "What services and transactions can be performed through internet banking?",
-      answer:
-        "What services and transactions can be performed through internet banking?",
+      question: "What is the marketplace feature in HandShake Wallet, and how does it ensure safe transactions?",
+      answer: "The HandShake Wallet marketplace allows users to buy and sell items globally. To ensure safe transactions, we implement a secure payment holding mechanism. Funds are held securely until the buyer confirms receipt of the goods, protecting both buyers and sellers from potential fraud."
     },
     {
-      question:
-        "What services and transactions can be performed through internet banking?",
-      answer:
-        "What services and transactions can be performed through internet banking?",
-    },
+      question: "How do I get started with HandShake Wallet, and is there a fee to use it?",
+      answer: "To get started, simply create an account and verify your identity. Basic account creation is free. While there are nominal fees for transactions and transfers to ensure platform sustainability, these are transparently displayed before you confirm any action. Our fee structure is designed to be competitive and user-friendly."
+    }
   ];
   return (
     <section className="w-full mx-auto">
