@@ -24,7 +24,7 @@ const initialState: Profile = {
 export const fetchUserProfile = createAsyncThunk(
   "userProfile/fetchUserProfile",
   async (data: { web5: any; did: string }, { rejectWithValue }) => {
-    console.log("Thunk started executing");
+    // console.log("Thunk started executing");
     try {
       const response = await data.web5.dwn.records.query({
         message: {
@@ -39,14 +39,14 @@ export const fetchUserProfile = createAsyncThunk(
         const result = await Promise.all(
           response.records.map(async (record: any) => {
             const { data } = await record;
-            console.log("data.jsonnn", data.json());
+            // console.log("data.jsonnn", data.json());
             return data.json();
           })
         );
-        console.log("result", result);
+        // console.log("result", result);
         return result;
       } else {
-        console.log("error", response.status);
+        // console.log("error", response.status);
         return rejectWithValue("No profile found");
       }
     } catch (error) {
@@ -58,7 +58,6 @@ export const fetchUserProfile = createAsyncThunk(
   }
 );
 
-
 export const createUserProfile = createAsyncThunk(
   "userProfile/createUserProfile",
   async (
@@ -69,7 +68,7 @@ export const createUserProfile = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    console.log("Creating user profile...");
+    // console.log("Creating user profile...");
     try {
       const { record } = await data.web5.dwn.records.create({
         data: data.profile,
@@ -82,7 +81,7 @@ export const createUserProfile = createAsyncThunk(
       });
 
       const createdProfile = await record.data.json();
-      console.log("Created profile:", createdProfile);
+      // console.log("Created profile:", createdProfile);
       return createdProfile;
     } catch (error) {
       console.error("Error creating profile:", error);
@@ -103,7 +102,7 @@ export const updateUserProfile = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    console.log("Updating user profile...");
+    // console.log("Updating user profile...");
     try {
       const { records } = await data.web5.dwn.records.query({
         message: {
@@ -115,27 +114,27 @@ export const updateUserProfile = createAsyncThunk(
         },
       });
 
-      console.log("Query results:", records);
+      // console.log("Query results:", records);
 
       if (records.length === 0) {
         throw new Error("No profile found to update");
       }
 
       const existingRecord = records[0];
-      console.log("Existing record:", existingRecord);
+      // console.log("Existing record:", existingRecord);
 
       let existingData = await existingRecord.data.json();
-      console.log("Existing data:", existingData);
+      // console.log("Existing data:", existingData);
 
       // Update the existing data with the new profile data
       existingData = { ...existingData, ...data.profile };
-      console.log("Updated data:", existingData);
+      // console.log("Updated data:", existingData);
 
       const response = await existingRecord.update({
         data: existingData,
       });
 
-      console.log("Update response:", response);
+      // console.log("Update response:", response);
 
       if (response.status.code === 202) {
         // Obtain the updated record
@@ -148,7 +147,7 @@ export const updateUserProfile = createAsyncThunk(
         });
 
         const updatedProfile = await updatedRecord.data.json();
-        console.log("Updated profile:", updatedProfile);
+        // console.log("Updated profile:", updatedProfile);
         return updatedProfile;
       } else {
         throw new Error(`Error updating profile: ${response.status.code}`);
@@ -165,7 +164,7 @@ export const updateUserProfile = createAsyncThunk(
 export const deleteUserProfile = createAsyncThunk(
   "userProfile/deleteUserProfile",
   async (data: { web5: any; did: string }, { rejectWithValue }) => {
-    console.log("Deleting user profile...");
+    // console.log("Deleting user profile...");
     try {
       const { records } = await data.web5.dwn.records.query({
         message: {
@@ -192,9 +191,7 @@ export const deleteUserProfile = createAsyncThunk(
       });
 
       if (response.status.code === 202) {
-        console.log(
-          `Deleted profile for ${profileName}. Status: ${response.status.code}`
-        );
+        // console.log( `Deleted profile for ${profileName}. Status: ${response.status.code}`);
         return {
           success: true,
           message: `Profile for ${profileName} deleted successfully`,
@@ -227,14 +224,14 @@ const userProfileSlice = createSlice({
       .addCase(fetchUserProfile.fulfilled, (state, action: any) => {
         state.name = action.payload.name;
         state.data = action.payload;
-        console.log("action.payload", action.payload);
+        // console.log("action.payload", action.payload);
         state.bio = action.payload.bio;
         state.location = action.payload.location;
       })
       .addCase(fetchUserProfile.rejected, (state, action: any) => {
         state.error = action.error.message;
         state.data = null;
-        console.log("Failed to fetch user profile data", action.error);
+        // console.log("Failed to fetch user profile data", action.error);
       })
       .addCase(createUserProfile.pending, (state) => {
         state.status = "loading";

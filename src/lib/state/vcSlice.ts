@@ -28,7 +28,7 @@ export const getVcJwt = createAsyncThunk(
         did: customerDID,
       },
     });
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   }
 );

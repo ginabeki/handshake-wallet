@@ -57,7 +57,7 @@ export const handshakeInstallProtocol = async (web5: any, did: string) => {
     });
 
     await protocol.send(did);
-    console.log("Handshake protocol installed successfully");
+    // console.log("Handshake protocol installed successfully");
   } catch (error) {
     console.error("Failed to install Handshake protocol", error);
   }

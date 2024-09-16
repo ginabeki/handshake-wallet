@@ -41,14 +41,14 @@ const Navbar = () => {
 
   // fetch user profile
   const handleFetchUserProfile = useCallback(() => {
-    console.log("Fetch profile button clicked");
-    console.log("web5:", web5);
-    console.log("did:", did);
+    // console.log("Fetch profile button clicked");
+    // console.log("web5:", web5);
+    // console.log("did:", did);
     if (web5 && did) {
-      console.log("Dispatching fetchUserProfile");
+      // console.log("Dispatching fetchUserProfile");
       dispatch(fetchUserProfile({ web5, did }));
     } else {
-      console.log("web5 or did is undefined");
+      // console.log("web5 or did is undefined");
     }
   }, [dispatch, web5, did]);
 
@@ -62,7 +62,7 @@ const Navbar = () => {
       };
       dispatch(createUserProfile({ web5, did, profile: newProfile }));
     } else {
-      console.log("web5 or did is undefined");
+      // console.log("web5 or did is undefined");
     }
   }, [dispatch, web5, did]);
 
@@ -74,10 +74,10 @@ const Navbar = () => {
         bio: "Updated bio for John Doe",
         location: profile.location
       };
-      console.log("Dispatching updateUserProfile with:", { web5, did, profile: updatedProfile });
+      // console.log("Dispatching updateUserProfile with:", { web5, did, profile: updatedProfile });
       try {
         const result = await dispatch(updateUserProfile({ web5, did, profile: updatedProfile })).unwrap();
-        console.log("Profile updated successfully:", result);
+        // console.log("Profile updated successfully:", result);
         // Optionally, you can fetch the updated profile here
         dispatch(fetchUserProfile({ web5, did }));
       } catch (error) {
@@ -85,7 +85,7 @@ const Navbar = () => {
         // Handle the error (e.g., show an error message to the user)
       }
     } else {
-      console.log("Cannot update profile:", { web5, did, profile });
+      // console.log("Cannot update profile:", { web5, did, profile });
     }
   }, [dispatch, web5, did, profile]);
 
@@ -94,14 +94,14 @@ const Navbar = () => {
     if (web5 && did) {
       try {
         const result = await dispatch(deleteUserProfile({ web5, did })).unwrap();
-        console.log("Profile deleted successfully:", result);
+        // console.log("Profile deleted successfully:", result);
         // Optionally, you can redirect the user or show a success message
       } catch (error) {
         console.error("Failed to delete profile:", error);
         // Handle the error (e.g., show an error message to the user)
       }
     } else {
-      console.log("Cannot delete profile:", { web5, did });
+      // console.log("Cannot delete profile:", { web5, did });
     }
   }, [dispatch, web5, did]);
 
@@ -115,17 +115,17 @@ const Navbar = () => {
   }, [dispatch, router]);
 
   useEffect(() => {
-    // console.log('Auth state changed:', { status, isAuthenticated, did, error });
-    console.log('Auth state changed:', { status, isAuthenticated, did, publicDid, error });
+    // // console.log('Auth state changed:', { status, isAuthenticated, did, error });
+    // console.log('Auth state changed:', { status, isAuthenticated, did, publicDid, error });
     if (isAuthenticated && did) {
       router.push("/dashboard");
-      // console.log('Web5 instance:', web5);
+      // // console.log('Web5 instance:', web5);
     }
   }, [status, isAuthenticated, did, router, error]);
 
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  console.log('constantPublicDid', publicDid);
+  // console.log('constantPublicDid', publicDid);
   return (
     <header className="w-full mx-auto drop-shadow-md">
       <div className="w-full mx-auto flex flex-row items-center justify-between max-w-[1440px] px-5 py-6 md:px-10">

@@ -25,7 +25,7 @@ export const sendMessage = createAsyncThunk(
     'messages/sendMessage',
     async ({ web5, did, itemId, sellerId, message }: any, { rejectWithValue }) => {
       try {
-        console.log('Sending message:', { did, itemId, sellerId, message });
+        // console.log('Sending message:', { did, itemId, sellerId, message });
         const { record } = await web5.dwn.records.create({
           data: {
             from: did,
@@ -42,12 +42,12 @@ export const sendMessage = createAsyncThunk(
           },
         });
   
-        console.log('Record created:', record);
+        // console.log('Record created:', record);
   
         if (record && typeof record.send === 'function') {
           try {
             await record.send(sellerId);
-            console.log('Message sent to seller');
+            // console.log('Message sent to seller');
           } catch (sendError) {
             console.error('Error sending record to seller:', sendError);
           }
@@ -56,7 +56,7 @@ export const sendMessage = createAsyncThunk(
         }
   
         const sentMessage = { from: did, to: sellerId, itemId, message, timestamp: new Date().toISOString() };
-        console.log('Message sent successfully:', sentMessage);
+        // console.log('Message sent successfully:', sentMessage);
         return sentMessage;
       } catch (error: any) {
         console.error('Error in sendMessage thunk:', error);

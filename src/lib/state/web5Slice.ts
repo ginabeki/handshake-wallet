@@ -29,7 +29,7 @@ if (publicDid) {
 } else {
   console.error("publicDid is undefined");
 }
-console.log("constantPublicDid", publicDid);
+// console.log("constantPublicDid", publicDid);
 
 export const initializeWeb5 = createAsyncThunk<
   { web5: any; did: string },
@@ -82,7 +82,7 @@ const web5Slice = createSlice({
         state.isAuthenticated = true;
         state.error = null;
         state.loading = false;
-        console.log("Web5 initialized successfully:", web5.connectedDid);
+        // console.log("Web5 initialized successfully:", web5.connectedDid);
         if (web5 && did) {
           handshakeInstallProtocol(web5, web5.connectedDid);
         }

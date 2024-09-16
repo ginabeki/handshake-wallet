@@ -55,7 +55,7 @@ const ItemDetails: React.FC = () => {
 
     try {
       const result = await dispatch(sendMessage({ web5, did, itemId: item.id, sellerId: item.sellerId, message })).unwrap();
-      console.log('Message sent result:', result);
+      // console.log('Message sent result:', result);
       setMessage("");
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000); // Hide success message after 3 seconds

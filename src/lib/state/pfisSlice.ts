@@ -9,6 +9,7 @@ interface Pfis {
   selectedCredentials: any;
   selectedPfi: any;
   rfq: any;
+  order: any;
 }
 
 const initialState: Pfis = {
@@ -19,6 +20,7 @@ const initialState: Pfis = {
   selectedCredentials: null,
   selectedPfi: null,
   rfq: null,
+  order: null,
 };
 
 export const getOfferings = createAsyncThunk(
@@ -65,6 +67,10 @@ const pfisSlice = createSlice({
     setRfq: (state, action) => {
       state.rfq = action.payload;
     },
+
+    setOrder: (state, action) => {
+      state.order = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -87,7 +93,7 @@ const pfisSlice = createSlice({
   },
 });
 
-export const { setSelectedCredentials, setSelectedPfi, setRfq } =
+export const { setSelectedCredentials, setSelectedPfi, setRfq, setOrder } =
   pfisSlice.actions;
 
 export default pfisSlice.reducer;
